@@ -1,0 +1,2 @@
+config,available,note,frames,duration_s,fps,prep_p50_ms,infer_p50_ms,infer_p95_ms,total_p50_ms,total_p95_ms,pose_rate,knee_detect_rate,knee_jitter_norm,thermal_max,battery_start_c,battery_end_c
+movenet-lightning-gpu,1,"",1740,60.05,28.97,9,20,26,29,36,1.00,0.99,0.00092,1,36.7,36.8

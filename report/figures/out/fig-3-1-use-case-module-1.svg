@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 636" width="960" height="636">
+  <style>
+  text { font-family: Segoe UI, Calibri, Helvetica Neue, Arial, sans-serif; fill: #16323D; }
+  .t    { font-size: 15px; }
+  .tb   { font-size: 15px; font-weight: 600; }
+  .s    { font-size: 12.5px; fill: #4A646F; }
+  .sb   { font-size: 12.5px; font-weight: 600; fill: #4A646F; }
+  .e    { font-size: 12.5px; fill: #4A646F; }
+  .h    { font-size: 16px; font-weight: 600; }
+  .m    { font-family: Consolas, DejaVu Sans Mono, Courier New, monospace; font-size: 12.5px; }
+  .mb   { font-family: Consolas, DejaVu Sans Mono, Courier New, monospace; font-size: 12.5px; font-weight: 600; }
+  .cap  { font-size: 12.5px; fill: #4A646F; font-style: italic; }
+  .box  { fill: #F2F7F9;  stroke: #16323D;    stroke-width: 1.4; }
+  .boxw { fill: #FDF0EB;  stroke: #E8663C;  stroke-width: 1.4; }
+  .boxp { fill: #FFFFFF; stroke: #16323D;    stroke-width: 1.4; }
+  .boxq { fill: #FFFFFF; stroke: #C7D6DC;   stroke-width: 1.4; }
+  .boxd { fill: none;    stroke: #4A646F;  stroke-width: 1.2; stroke-dasharray: 5 4; }
+  .boxk { fill: #16323D;   stroke: #16323D;    stroke-width: 1.4; }
+  .reg  { fill: none;    stroke: #C7D6DC;   stroke-width: 1.2; }
+  .ln   { stroke: #16323D;   stroke-width: 1.4; fill: none; }
+  .lnm  { stroke: #4A646F; stroke-width: 1.2; fill: none; }
+  .lnh  { stroke: #C7D6DC;  stroke-width: 1.2; fill: none; }
+  .lna  { stroke: #E8663C; stroke-width: 1.6; fill: none; }
+  .lnd  { stroke: #4A646F; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+  .life { stroke: #C7D6DC;  stroke-width: 1.2; stroke-dasharray: 4 4; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9.2" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0.8 L10,5 L0,9.2 z" fill="#16323D"/></marker>
+    <marker id="am" viewBox="0 0 10 10" refX="9.2" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0.8 L10,5 L0,9.2 z" fill="#4A646F"/></marker>
+    <marker id="aa" viewBox="0 0 10 10" refX="9.2" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0.8 L10,5 L0,9.2 z" fill="#E8663C"/></marker>
+    <marker id="ao" viewBox="0 0 10 10" refX="9.6" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0.5,0.8 L10,5 L0.5,9.2" fill="none" stroke="#4A646F" stroke-width="1.5"/></marker>
+    <marker id="tri" viewBox="0 0 10 10" refX="9.6" refY="5" markerWidth="11" markerHeight="11" orient="auto-start-reverse"><path d="M0.5,0.6 L10,5 L0.5,9.4 z" fill="#FFFFFF" stroke="#16323D" stroke-width="1.2"/></marker>
+  </defs>
+  <rect x="0" y="0" width="960" height="636" fill="#FFFFFF"/>
+  <rect x="208" y="64" width="694" height="512" rx="8" class="reg"/>
+  <text x="555" y="92" class="h" text-anchor="middle">FORMA mobile application - Module 1: Training session</text>
+  <g stroke="#16323D" stroke-width="1.5" fill="none">
+    <circle cx="110" cy="290.0" r="8.0" fill="#FFFFFF"/>
+    <line x1="110" y1="298.0" x2="110" y2="322.0"/>
+    <line x1="97.0" y1="306.0" x2="123.0" y2="306.0"/>
+    <line x1="110" y1="322.0" x2="99.0" y2="340.0"/>
+    <line x1="110" y1="322.0" x2="121.0" y2="340.0"/>
+  </g>
+  <text x="110" y="358.0" class="tb" text-anchor="middle"></text>
+  <text x="110" y="392" class="tb" text-anchor="middle">Trainee</text>
+  <line x1="110" y1="322" x2="311.7" y2="188.1" class="lnm"/>
+  <line x1="110" y1="322" x2="252.0" y2="322.0" class="lnm"/>
+  <line x1="110" y1="322" x2="311.7" y2="455.9" class="lnm"/>
+  <line x1="440.4" y1="290.9" x2="641.6" y2="207.1" class="lnd" marker-end="url(#ao)"/>
+  <text x="531.4" y="229.9" class="e" text-anchor="middle">«include»</text>
+  <line x1="641.6" y1="436.9" x2="440.4" y2="353.1" class="lnd" marker-end="url(#ao)"/>
+  <text x="550.6" y="375.9" class="e" text-anchor="middle">«extend»</text>
+  <ellipse cx="366" cy="152" rx="114" ry="41" class="boxp"/>
+  <text x="366" y="144" class="sb" text-anchor="middle">UC-01</text>
+  <text x="366" y="164" class="tb" text-anchor="middle">Select an exercise</text>
+  <ellipse cx="366" cy="322" rx="114" ry="41" class="boxp"/>
+  <text x="366" y="314" class="sb" text-anchor="middle">UC-03</text>
+  <text x="366" y="334" class="tb" text-anchor="middle">Perform a training set</text>
+  <ellipse cx="366" cy="492" rx="114" ry="41" class="boxp"/>
+  <text x="366" y="476" class="sb" text-anchor="middle">UC-05</text>
+  <text x="366" y="494" class="tb" text-anchor="middle">End the set and</text>
+  <text x="366" y="512" class="tb" text-anchor="middle">view its summary</text>
+  <ellipse cx="716" cy="176" rx="114" ry="41" class="boxp"/>
+  <text x="716" y="168" class="sb" text-anchor="middle">UC-02</text>
+  <text x="716" y="188" class="tb" text-anchor="middle">Set up for a set</text>
+  <ellipse cx="716" cy="468" rx="114" ry="41" class="boxp"/>
+  <text x="716" y="452" class="sb" text-anchor="middle">UC-04</text>
+  <text x="716" y="470" class="tb" text-anchor="middle">Deliver a</text>
+  <text x="716" y="488" class="tb" text-anchor="middle">corrective cue</text>
+  <text x="208" y="608" class="cap" text-anchor="start">UC-02 is reached only as part of a set, so it carries no association of its own. UC-04 is raised by the system when a fault is</text>
+  <text x="208" y="626" class="cap" text-anchor="start">confirmed, not requested by the trainee, so it extends UC-03 rather than starting from the actor.</text>
+
+</svg>

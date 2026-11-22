@@ -1,0 +1,364 @@
+\chapter{Movement Assessment Design}
+\label{chap:6}
+
+\section{From Exercise to Specification}
+\label{sec:6.1}
+
+An exercise is one JSON file. A single evaluator executes it, and the evaluator holds no branch on any exercise name.
+
+{\small
+\setlength{\LTpre}{6pt}\setlength{\LTpost}{8pt}
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr 0.253\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.747\textwidth-2\tabcolsep\relax}}
+\caption{What each block of a specification declares}\\
+\toprule
+Block & What it declares \\
+\midrule
+\endfirsthead
+\toprule
+Block & What it declares \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+\texttt{landmarks} & The points this exercise depends on. Eight for the squat, ten for the plank, twelve for the push-up \\
+\texttt{framing} & The camera placement the exercise assumes, which landmarks the measurements need, and the reminders the set-up screen shows \\
+\texttt{rep\_\allowbreak{}driver} & One scalar signal, how it is extracted, how it is smoothed, and the two bounds that segment it \\
+\texttt{phases} & The named intervals over that signal \\
+\texttt{faults} & Per fault: a code, whether it is judged every frame or once per repetition, the phases it is scoped to, the constraint, the threshold, and where that threshold came from \\
+\texttt{excluded\_\allowbreak{}faults} & Deviations considered and not implemented, each with its reason \\
+\texttt{cues} & Fault code to audio asset, keyed by language \\
+\texttt{trigger} & Confidence floor, rate limits, and the order faults are spoken in \\
+\end{longtable}
+}
+
+The evaluator reads the file, validates it, and refuses to load one that fails validation rather than loading the parts that parse. A specification that names a landmark the engine does not emit, a measurement function that does not exist, or a fault with no cue is rejected at load with the failure named, which is FR-23 and NFR-E3.
+
+Three things are worth drawing out about the shape of the format.
+
+\textbf{The provenance field is not optional.} A fault cannot be expressed without one, so the question of where a number came from is answered when the file is written rather than when someone asks. The field separates the taxonomy source from the threshold source, and those two are in very different states, which 6.4.2 sets out.
+
+\textbf{Exclusions are recorded in the file that defines the exercise.} A reviewer asking why the squat does not detect knees caving in finds the answer beside the faults it does detect, with the reason, what was tried instead, and what would make it expressible later. An absence with no reason beside it is indistinguishable from an oversight.
+
+\textbf{Nothing in the format describes an algorithm.} It declares what to measure and what to compare it against. How a measurement is computed belongs to the evaluator's vocabulary, which is shared across exercises and tested independently of all of them.
+
+\section{Landmarks and Measurements}
+\label{sec:6.2}
+
+The engine emits the COCO seventeen-keypoint layout. Twelve of the seventeen are used; the five face points are returned on every frame and no rule reads them.
+
+{\small
+\setlength{\LTpre}{6pt}\setlength{\LTpost}{8pt}
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr 0.275\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.725\textwidth-2\tabcolsep\relax}}
+\caption{The landmarks each exercise depends on}\\
+\toprule
+ & Points used \\
+\midrule
+\endfirsthead
+\toprule
+ & Points used \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+Squat & shoulder, hip, knee, ankle, both sides \\
+Push-up & shoulder, elbow, wrist, hip, knee, ankle, both sides \\
+Plank & shoulder, elbow, hip, knee, ankle, both sides \\
+\end{longtable}
+}
+
+The evaluator carries eight measurement functions. The three specifications use five of them.
+
+{\small
+\setlength{\LTpre}{6pt}\setlength{\LTpost}{8pt}
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr 0.400\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.417\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.183\textwidth-2\tabcolsep\relax}}
+\caption{The measurement functions, what each returns, and which exercises use them}\\
+\toprule
+Function & Returns & Used by \\
+\midrule
+\endfirsthead
+\toprule
+Function & Returns & Used by \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+\texttt{angle} & The interior angle at the middle of three points & Both repetition drivers \\
+\texttt{angle\_\allowbreak{}from\_\allowbreak{}vertical} & A segment's angle away from vertical & The plank's hold driver \\
+\texttt{y\_\allowbreak{}delta} & The signed vertical difference between two points & Squat depth \\
+\texttt{signed\_\allowbreak{}offset\_\allowbreak{}from\_\allowbreak{}line} & A point's signed perpendicular distance from a line through two others & All four hip faults \\
+\texttt{signed\_\allowbreak{}angle\_\allowbreak{}between\_\allowbreak{}segments} & The difference in inclination between two segments & Squat forward lean \\
+\end{longtable}
+}
+
+Every measurement declares an aggregation. All five above use \texttt{mean\_\allowbreak{}of\_\allowbreak{}sides}: the function is evaluated once for the left landmarks and once for the right, and the two are averaged. Where one side is below the visibility floor the other carries the measurement alone, and where both are the measurement is unavailable and the frame contributes nothing.
+
+Four of the faults normalise by \texttt{shoulder\_\allowbreak{}ankle\_\allowbreak{}length}, the distance from shoulder to ankle, so that a hip offset is expressed as a fraction of the body rather than in image units. A trainee standing further from the camera then produces the same number for the same deviation.
+
+\subsection{The coordinate space is not isotropic, and the measurements inherit it}
+\label{sec:6.2.1}
+
+The engine returns each point as a pair in the unit square: the horizontal coordinate divided by frame width, the vertical divided by frame height. The analysis frame is 720 by 1280, so \textbf{the two axes are scaled by factors that differ by 1.78}, and no correction is applied anywhere.
+
+The consequence is precise. A straight-line distance computed from those coordinates is not a length, and an angle computed from them is not the angle the body made. Both are stable, repeatable numbers that vary monotonically with the quantity of interest, which is enough to compare against a threshold, and neither is a physical measurement.
+
+The rules divide into two groups on this.
+
+\textbf{Immune by construction.} Squat depth compares a hip's vertical coordinate to a knee's. Both terms carry the same divisor, the horizontal scale never enters, and the comparison is therefore exactly as true in normalised coordinates as in pixels. This is a property of the rule. Nothing corrects for it afterwards. It is one of the reasons the published criterion was implemented as a vertical difference and not as a thigh angle.
+
+\textbf{Distorted, and treated accordingly.} Every angle in the system, both repetition drivers and the lean measurement, is read in a space where vertical is stretched relative to horizontal. The numbers are consistent for a fixed camera geometry, which is what the thresholds are set against, and they are not transferable to a different frame aspect ratio without being re-derived.
+
+The four hip faults sit between the two. \texttt{signed\_\allowbreak{}offset\_\allowbreak{}from\_\allowbreak{}line} is a distorted distance divided by another distorted distance taken along a similar direction, so much of the anisotropy cancels. How much is not quantified. The thresholds come from recordings, not from geometry. That makes the question moot for the values in use, and relevant for any attempt to predict one.
+
+\section{Phase Segmentation}
+\label{sec:6.3}
+
+Each exercise declares one scalar signal, and everything about where the trainee is in the movement is derived from it.
+
+{\scriptsize
+\setlength{\LTpre}{6pt}\setlength{\LTpost}{8pt}
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr 0.117\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.359\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.172\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.097\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.133\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.122\textwidth-2\tabcolsep\relax}}
+\caption{The repetition driver and its bounds, per exercise}\\
+\toprule
+ & Driver & Smoothing & Enters at & Completes at & Bounds \\
+\midrule
+\endfirsthead
+\toprule
+ & Driver & Smoothing & Enters at & Completes at & Bounds \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+Squat & Knee angle, hip-knee-ankle & median, 3 frames & 145 deg & 156 deg & 0.8 to 8 s \\
+Push-up & Elbow angle, shoulder-elbow-wrist & median, 3 frames & 120 deg & 135 deg & 0.6 to 6 s \\
+Plank & Shoulder-hip line from vertical & median, 5 frames & 65 deg & 50 deg & 3 to 600 s \\
+\end{longtable}
+}
+
+\textbf{Two bounds rather than one, because one bound chatters.} A single threshold crossed by a noisy signal produces a burst of openings and closings around the crossing point. Separating the entry from the exit means the signal has to travel a declared distance before the state changes again, and the distance is the hysteresis band.
+
+\textbf{The median filter removes spikes without lagging a ramp.} A mean would drag the measurement toward an outlier rather than discarding it, which matters most at the turning points where the phase decision is made. The plank uses a five-frame window because it has no fast transition to preserve and benefits from the extra rejection.
+
+\textbf{The duration bounds reject segments that are not repetitions.} A movement faster than the lower bound is a twitch in the signal rather than a repetition; one slower than the upper bound is a trainee who stopped mid-movement. Neither is counted, and neither is reported as a fault.
+
+The phases are named intervals over the same signal. The squat and push-up both declare four, standing or top, descent, bottom and ascent; the plank declares two, out and holding. Faults are scoped to phases by name, which is what keeps a depth rule from firing while the trainee is standing up.
+
+\subsection{A hold is the same machine with one comparison reversed}
+\label{sec:6.3.1}
+
+A plank is not a special case in the evaluator. It is the same segmenter with the entry comparison inverted: the segment is entered when the driver rises past its bound and left when it falls back under the other.
+
+What differs is only what is reported at the end. A counting exercise reports repetitions; the plank declares \texttt{reports:\allowbreak{} duration} and reports seconds. This is the one scoring mode the format carries beyond counting, and 4.6.1 records it as one of the two features the three exercises cost.
+
+Duration accumulates continuously rather than at the end of the hold, so a trainee who ends the set while still in position gets the time they actually held rather than zero.
+
+\subsection{Bounds taken from the engine, not from anatomy}
+\label{sec:6.3.2}
+
+The completion bound is the most fragile number in the three files, and it is worth being explicit about why.
+
+The intuition is that a repetition is complete when the joint returns to full extension, and that full extension has a known value: a straight knee is 180 degrees, a locked elbow is close to it. Both are true of the body and neither is true of the measurement. Read through this pipeline, with a seventeen-keypoint estimate in an anisotropic coordinate space, the top of a push-up measures around 150 degrees and the top of a squat around 177.
+
+The recorded sets make a sharper point. \textbf{The fault being performed changes the top of the repetition.} Standing between clean squats the knee reached 174 to 179 degrees. Performing the same squat with the torso pitched forward, it reached 160 to 171, because a leaning trainee does not finish the repetition fully upright. A bound placed on clean form therefore sits inside the spread of the faulted form, and the set that most needs counting is the set that miscounts.
+
+Both bounds are now set from the recordings: the lowest top observed across every set of that exercise, with a margin below it. The entry bound is held high rather than lowered with it, so that the descent window the lean rule is scoped to keeps its length.
+
+The durable answer is a completion rule measured from where each repetition started, instead of against a fixed angle. Such a rule would adapt to the person, to the fault and to the session at once. It is specified and not built.
+
+\section{Fault Detection}
+\label{sec:6.4}
+
+A fault is a comparison between a measurement and a threshold, confirmed over time. The comparison is declared; the confirmation is the part worth explaining.
+
+{\footnotesize
+\setlength{\LTpre}{6pt}\setlength{\LTpost}{8pt}
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr 0.350\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.251\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.133\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.154\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.112\textwidth-2\tabcolsep\relax}}
+\caption{The six faults, with how each is measured, tested and confirmed}\\
+\toprule
+Fault & Measure & Test & Confirm & Scope \\
+\midrule
+\endfirsthead
+\toprule
+Fault & Measure & Test & Confirm & Scope \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+\texttt{SQ\_\allowbreak{}DEPTH\_\allowbreak{}INSUFFICIENT} & hip y minus knee y & < -0.0209 & 3 frames, per repetition & bottom \\
+\texttt{SQ\_\allowbreak{}FORWARD\_\allowbreak{}LEAN} & torso inclination minus tibia inclination & > 10 deg & 3 consecutive frames & descent, bottom \\
+\texttt{PU\_\allowbreak{}HIP\_\allowbreak{}SAG} & hip offset from the shoulder-ankle line & > +0.03 & 5 consecutive frames & all phases \\
+\texttt{PU\_\allowbreak{}HIP\_\allowbreak{}PIKE} & the same offset & < -0.05 & 5 consecutive frames & all phases \\
+\texttt{PL\_\allowbreak{}HIP\_\allowbreak{}SAG} & the same offset & > +0.02 & 30 consecutive frames & holding \\
+\texttt{PL\_\allowbreak{}HIP\_\allowbreak{}PIKE} & the same offset & < -0.08 & 30 consecutive frames & holding \\
+\end{longtable}
+}
+
+The confirmation window differs by exercise and by what the fault describes. Three frames suits a squat, where the phase a fault is scoped to lasts under a second. Thirty, one full second, suits the plank, where nothing is moving and a fault that is real will still be there a second later. The number comes from the recordings, not from preference. Across a clean plank, the sag measurement drifts past its edge for a longest unbroken run of 22 frames. A deliberate fault runs 267. A window of 30 rejects the drift with eight frames in hand.
+
+A second would not be acceptable in a squat and is here. 3.4.1 derives the response budget from a repetition's descent, where a late cue describes a repetition that is already over. A hold has no repetition to miss, so a second spent making sure costs the trainee nothing.
+
+\subsection{Every repetition is judged on its own}
+\label{sec:6.4.1}
+
+One fault in the set describes a repetition as a whole rather than an instant within it, and it is the clearest case of the kind: a squat is not shallow at a particular frame, the squat was shallow.
+
+The natural implementation tracks the most violating value seen so far and reports it at the end. It is correct for a deviation that can appear at any moment and wrong for one that describes a repetition, and the failure is specific: a trainee who squats shallow five times and then once slightly deeper, still above the line, has performed six faulty repetitions, and an evaluator holding a running extreme reports the deepest and clears the rest.
+
+The format therefore carries two evaluation modes.
+
+\textbf{Continuous.} The measurement is taken on every frame whose phase is in the fault's declared list. A violating frame increments a streak; any frame that does not violate, or where a landmark falls below the visibility floor, resets it. The fault is raised when the streak reaches the declared length.
+
+\textbf{Per repetition.} Every frame between the start and the end of the repetition contributes a sample, regardless of phase. At the closing boundary the samples are ranked and the n-th best is taken as the repetition's value, compared once, recorded against that repetition number, and the buffer is emptied.
+
+Two details of the second mode carry weight. Taking the n-th best rather than the single best is the noise guard, the same job the streak does for a continuous fault, done by ranking instead of by consecutiveness. And sampling the whole repetition, instead of only its extreme, makes the verdict independent of the driver. That matters: the driver goes unmeasurable at the bottom of a squat whenever the ankle leaves the frame.
+
+Emptying the buffer at the boundary is what makes repetition six's verdict ignorant of repetition five.
+
+\subsection{Where the thresholds come from, and where they do not}
+\label{sec:6.4.2}
+
+Three kinds of number appear in the files, and the specification distinguishes them in its own fields rather than in prose.
+
+\textbf{A published criterion, implemented literally.} The Functional Movement Screen defines adequate squat depth as the femur below horizontal, which is the hip landmark at or below the knee landmark: a signed vertical difference with a criterion of zero. It defines correct trunk position as the upper torso parallel with the tibia or closer to vertical, which compares two segments inside the same frame.
+
+\textbf{A tolerance around a criterion, measured.} A threshold of exactly zero would have the system speak about differences it cannot resolve. Ten squats performed at a deliberately constant depth gave a standard deviation of 0.0107 at the deepest point of each repetition, and at a threshold of zero those ten split six passes to four faults, which is the measurement's own noise reported as a difference in form. The threshold is set 0.0209 below the criterion, at which all ten pass. The 10 degrees on the lean rule is the same kind of number, allowing for noise around the source's word \textit{parallel}.
+
+\textbf{A band placed against a measured neutral.} The four hip thresholds come from recordings in which half the repetitions were performed correctly and half with the fault exaggerated, and 6.4.3 explains why they are not symmetric.
+
+The specification records the taxonomy source and the threshold source as separate fields. \textbf{Five of the six faults carry a taxonomy source and none carries a threshold source.} That is stated here as a result, not left for a reader to discover. Every source located for this project establishes that a deviation is a fault and gives an observable condition for recognising it. None gives the quantity at which the fault begins.
+
+\subsection{Neutral is not zero}
+\label{sec:6.4.3}
+
+A body the trainee held straight does not measure zero offset from its own shoulder-to-ankle line. It measured \textbf{-0.030 in the plank and -0.010 in the push-up}. The line runs to the ankle and the hip is not on it, so a correct position sits slightly above the line by construction.
+
+A band written symmetrically about zero is therefore asymmetric in use. At plus and minus 0.06, the value both exercises started with, the sag edge sat 0.090 above this trainee's neutral while the pike edge sat 0.030 below it, so pike was three times the more sensitive of the two and fired on correct form.
+
+The four edges are now placed against the measured neutral.
+
+{\footnotesize
+\setlength{\LTpre}{6pt}\setlength{\LTpost}{8pt}
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr 0.136\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.258\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.145\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.155\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.306\textwidth-2\tabcolsep\relax}}
+\caption{The hip bands, placed against the measured neutral rather than against zero}\\
+\toprule
+ & Measured neutral & Sag edge & Pike edge & Distance either side \\
+\midrule
+\endfirsthead
+\toprule
+ & Measured neutral & Sag edge & Pike edge & Distance either side \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+Push-up & -0.010 & +0.03 & -0.05 & 0.040 \\
+Plank & -0.030 & +0.02 & -0.08 & 0.050 \\
+\end{longtable}
+}
+
+Both exercises are now symmetric about the neutral that was actually measured, which is what the symmetric-about-zero band had been trying to achieve. The numbers differ between the two exercises because the neutral does, and that difference is a property of the two body positions rather than an inconsistency between the files.
+
+\subsection{Four faults were considered and excluded}
+\label{sec:6.4.4}
+
+{\small
+\setlength{\LTpre}{6pt}\setlength{\LTpost}{8pt}
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr 0.237\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.763\textwidth-2\tabcolsep\relax}}
+\caption{Four faults considered and excluded, with the reason for each}\\
+\toprule
+Fault & Reason \\
+\midrule
+\endfirsthead
+\toprule
+Fault & Reason \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+\texttt{SQ\_\allowbreak{}KNEE\_\allowbreak{}VALGUS} & Knee separation is a frontal-plane measurement and the squat declares a side view, where the two knees project onto nearly the same point \\
+\texttt{PU\_\allowbreak{}ELBOW\_\allowbreak{}FLARE} & The angle between the upper arm and the torso is measured about the long axis of the body, which needs a frontal or overhead view \\
+\texttt{SQ\_\allowbreak{}HEEL\_\allowbreak{}LIFT} & A spoken cue cannot correct it, because heels rising is in most cases an ankle mobility limit rather than a choice \\
+\texttt{PL\_\allowbreak{}HEAD\_\allowbreak{}DROP} & Observable, and no source consulted defines neck position as a fault at a stated magnitude \\
+\end{longtable}
+}
+
+The first two share a principle with each other and with the declared camera view. A geometric constraint is evaluated on the projected image, and a measurement taken along the axis the camera is looking down is not available at any accuracy. The engine still returns a position for the occluded side, but it is an inference, and a threshold applied to an inference is a detector that fires at random. Both were removed rather than approximated.
+
+\texttt{PL\_\allowbreak{}HEAD\_\allowbreak{}DROP} is excluded for the opposite reason to the first three. It is perfectly observable in the declared view. No expert-annotated taxonomy located for this project defines it as a fault with a criterion, and inventing a head angle and calling it a standard is the one thing the provenance rule exists to prevent.
+
+\section{Cue Selection and Timing}
+\label{sec:6.5}
+
+A raised fault is not a cue. Between them sits a policy whose entire job is to suppress, and which can never create a cue that the evaluator did not raise.
+
+{\footnotesize
+\setlength{\LTpre}{6pt}\setlength{\LTpost}{8pt}
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr 0.270\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.092\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.117\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.134\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.387\textwidth-2\tabcolsep\relax}}
+\caption{The trigger policy, per exercise}\\
+\toprule
+Control & Squat & Push-up & Plank & What it does \\
+\midrule
+\endfirsthead
+\toprule
+Control & Squat & Push-up & Plank & What it does \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+Confidence floor & 0.45 & 0.45 & 0.45 & Suppresses a cue whose landmarks the engine is not confident about \\
+Debounce & 0 ms & 0 ms & 0 ms & A second transient guard, in milliseconds \\
+Minimum gap & 2500 ms & 2500 ms & 2000 ms & Floor on the interval between any two spoken cues \\
+Cap per set & 6 & 6 & none & Ceiling on how often the system may speak \\
+Same cue in a row & 2 & 2 & none & Stops one sentence repeating indefinitely \\
+Cooldown before a repeat counts as new & 10 s & 8 s & not applicable & How long a fault must be gone to start the count again \\
+\end{longtable}
+}
+
+When two faults are live in the same repetition, the specification's priority order decides which is spoken and the other is recorded and not voiced. The order puts loading before range of motion: in the push-up and the plank, sag is spoken before pike, because sag loads the lumbar spine while piking only makes the hold easier.
+
+\textbf{The plank is paced differently, and the reason is the exercise.} A counting exercise supplies its own rhythm: the fault clears at the top of every repetition, the trainee gets a natural moment to act, and the caps keep the set from becoming a lecture. A plank supplies none of that, so it is told to keep correcting: one second of confirmation, a cue, a two second cooldown, and another cue while the fault is still there. Both ceilings are declared as none rather than as a large number, because the intent is no ceiling rather than a generous one. 3.4.5 records what this costs and leaves the judgement open.
+
+\textbf{The debounce is zero in the two counting exercises deliberately.} It duplicated the confirmation window in the wrong unit and at the wrong scope: the window is per fault and counted in frames, the debounce was per exercise and counted in milliseconds. A fault scoped to one short phase gets one window per repetition, and where that window was shorter than the debounce the fault could not be spoken at any tempo. The minimum gap and the per-set cap remain, and they are what actually stop the system talking too much.
+
+\textbf{Silence is a valid output}, declared as such in all three files. A set in which nothing is said is the expected result of a set performed correctly, and nothing in the design treats it as a missing result.
+
+\subsection{The confidence floor is the failure that costs a whole session}
+\label{sec:6.5.1}
+
+Of everything in the trigger policy, the confidence floor is the control that can silence the system completely while leaving every other indicator healthy. Faults are detected, the count advances, the interface looks correct, and nothing is spoken.
+
+It is also not comparable between engines, which is the part worth recording. The floor compares against whatever per-landmark score the pose model reports, and that number means different things in different models: one reports a visibility and another a keypoint heatmap score. Measured on the same standing pose, the same knee scored 0.986 under one and 0.761 under the other. A floor carried unchanged across an engine change is therefore a different floor.
+
+The present value is 0.45, derived by scaling the previous value by the ratio between those two scores. It is provisional, like every other number in these files that has no source, and it is recorded as such.
+
+A second factor sets a lower bound on how strict it can be. A flexed position self-occludes, so a landmark that scores well with the trainee standing scores worse at the bottom of a squat, which is the one phase the depth fault is evaluated in. A floor chosen from a standing measurement is therefore too strict where it is actually applied.
+
+\section{Extending to a New Exercise}
+\label{sec:6.6}
+
+The procedure, end to end.
+
+\begin{enumerate}
+\item \textbf{Choose the camera view}, and establish which faults it can observe. This is first because it bounds everything after it, and 4.5.3 explains why it is one decision with the fault set rather than two.
+\item \textbf{Locate the taxonomy.} A fault enters the set because a published source names it and gives an observable condition. The specification cannot express it otherwise.
+\item \textbf{Author the file.} Landmarks, framing, driver, phases, faults, cues, trigger.
+\item \textbf{Record clips and set the thresholds.} Correct execution and the fault performed deliberately, replayed offline through the shipped model, which is the procedure 9.3 describes.
+\item \textbf{Write and render the cues}, one per fault, each a single imperative phrase of five words or fewer.
+\item \textbf{Validate}, which happens at load and in the test suite the moment the file is added.
+\end{enumerate}
+
+Steps 1, 2, 4 and 5 are the work. Step 3 is the one the extensibility claim is about, and the claim is deliberately narrow: no application code changes, once the measurement vocabulary the exercise needs and the movement category it belongs to are already supported. 4.6.1 states it at that size and says what the three exercises in this phase cost.

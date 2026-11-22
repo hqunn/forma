@@ -1,0 +1,331 @@
+\chapter{Proof of Concept and Results}
+\label{chap:9}
+
+\section{Scope of the Proof of Concept}
+\label{sec:9.1}
+
+This phase builds the part of the product that decides whether the rest is worth building: the path from a camera frame to a spoken correction, running on a handset, for three exercises.
+
+\textbf{What was built.} The assessment library and its specification format, a mobile client carrying camera, model, interface and audio, a separate benchmark application for measuring the engine, and an offline replay harness that scores recorded video through exactly the shipped logic. Three exercise specifications, six faults, and a cue for each.
+
+\textbf{What was deliberately left out.} Everything in 1.4.2's second phase: no language is generated anywhere in this system. There is no programme generation, no nutrition, and no conversational layer. The server is specified and its contract is fixed by FR-16 to FR-18; it is not built in this phase, and 11.3 records that against the objective it serves. \textbf{FR-11, creating an account and signing in, goes with it}, since there is nothing to sign in to.
+
+\textbf{FR-15, deleting a session, is also not built, and it has no such excuse.} A record is one file in the application's own storage and removing it needs no server. It is named here rather than left for a reader to notice.
+
+The bar for this phase was set by the supervisor and is narrower than a shipped product: a proof of concept, a demonstration and a prototype. The measurements below are reported against that bar.
+
+\section{Implementation}
+\label{sec:9.2}
+
+{\small
+\setlength{\LTpre}{6pt}\setlength{\LTpost}{8pt}
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr 0.524\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.201\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.275\textwidth-2\tabcolsep\relax}}
+\caption{What was built, in files and lines}\\
+\toprule
+ & Files & Lines \\
+\midrule
+\endfirsthead
+\toprule
+ & Files & Lines \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+\texttt{assessment}, main & 9 & 2,057 \\
+\texttt{assessment}, tests & 12 & 2,201 \\
+\texttt{app}, main & 11 & 3,086 \\
+\texttt{app}, tests & 1 & 129 \\
+Benchmark application & 4 & 1,483 \\
+Replay harness & 1 & 680 \\
+Specifications & 3 & 538 \\
+\end{longtable}
+}
+
+Two ratios in that table are the ones worth reading.
+
+\textbf{The assessment module has more test code than production code}, 2,201 lines against 2,057. That is a consequence of the module having no Android dependency: because a recorded landmark sequence can be replayed through it as an ordinary unit test, testing it is cheap enough to be worth doing thoroughly.
+
+\textbf{The specifications are 538 lines for three exercises}, and most of that is provenance rather than rules. Each fault carries the source its definition came from and the derivation of its threshold, in the file, because the format will not accept a fault without them.
+
+The client is Kotlin on Android: CameraX for capture, TFLite for pose, Jetpack Compose for the interface. A set is written as one JSON file in the application's own storage and read back from there, so there is no database and no schema migration to carry; 7.5 lists what a record holds. The assessment library depends on nothing but a JSON parser.
+
+\section{Measurement Method}
+\label{sec:9.3}
+
+Three instruments, each measuring something the others cannot.
+
+\textbf{The benchmark application} drives the pose engine and nothing else. It shares no source with the client, so a figure attributed to it describes a fixed artefact rather than a build that has since changed. It measures frame rate and per-frame latency, and it cannot measure anything downstream of the engine because none of it is present. Appendix A describes it and names every run.
+
+\textbf{The test suite} runs the assessment layer against synthetic landmark sequences on a desktop JVM, with no device in the loop. It establishes that the evaluator does what the specification says, which is a different question from whether the specification describes the movement correctly.
+
+\textbf{The replay harness} closes the gap between the two. It runs a recorded video through the shipped model file with the same letterbox, the same presence floor, the same visibility floor, the same median smoothing, the same hysteresis and the same rules as the handset, and writes a per-frame record and a per-repetition verdict. Because the recordings are scripted, the correct answer for each is known before the system is run against it.
+
+\textbf{One caveat applies to every replay figure and is stated once here.} The harness runs TFLite on the desktop CPU, while the handset runs the GPU delegate. Verdicts are unaffected, because the model file and the arithmetic are identical; timings from the harness are not comparable to the device and none is quoted.
+
+\subsection{The recorded dataset}
+\label{sec:9.3.1}
+
+Ten sets, filmed in one session in a single camera position, left side to the camera at hip height.
+
+{\footnotesize
+\setlength{\LTpre}{6pt}\setlength{\LTpost}{8pt}
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr 0.230\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.150\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.161\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.459\textwidth-2\tabcolsep\relax}}
+\caption{The ten recorded sets}\\
+\toprule
+Set & Exercise & Performed & Scripted condition \\
+\midrule
+\endfirsthead
+\toprule
+Set & Exercise & Performed & Scripted condition \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+\texttt{SQ-\allowbreak{}CLEAN} & Squat & 10 reps & correct \\
+\texttt{SQ-\allowbreak{}SHALLOW} & Squat & 10 reps & stop above parallel \\
+\texttt{SQ-\allowbreak{}LEAN} & Squat & 10 reps & pitch the torso forward \\
+\texttt{PU-\allowbreak{}CLEAN} & Push-up & 10 reps & correct \\
+\texttt{PU-\allowbreak{}SAG} & Push-up & 10 reps & hips dropped \\
+\texttt{PU-\allowbreak{}PIKE} & Push-up & 10 reps & hips raised \\
+\texttt{PU-\allowbreak{}RANGE} & Push-up & 10 reps & body line held, range of motion varied \\
+\texttt{PL-\allowbreak{}CLEAN} & Plank & 44.7 s & correct \\
+\texttt{PL-\allowbreak{}SAG} & Plank & 47.6 s & hips dropped \\
+\texttt{PL-\allowbreak{}PIKE} & Plank & 47.2 s & hips raised \\
+\end{longtable}
+}
+
+\texttt{PU-\allowbreak{}RANGE} is a negative control. The body line is held throughout while the range of motion varies, so neither hip fault should fire, and it tests the two push-up rules against a movement that changes in a way they are meant to ignore.
+
+\textbf{The four clean sets are not filler.} They are the only source of a false-positive figure, and a fault detector reported without one has not been evaluated. They were performed with the same care as the fault sets.
+
+The repetition count in the third column is the ground truth, and it was established independently of the system: the driver trace for each set was examined for excursions past the entry bound, which counts repetitions without using the segmenter's own logic. Every set contained ten.
+
+\section{Results}
+\label{sec:9.4}
+
+\subsection{Perception}
+\label{sec:9.4.1}
+
+{\footnotesize
+\setlength{\LTpre}{6pt}\setlength{\LTpost}{8pt}
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr 0.232\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.170\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.277\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.321\textwidth-2\tabcolsep\relax}}
+\caption{Perception measured against the requirements it has to meet}\\
+\toprule
+Configuration & Frames per second & Total latency, 95th percentile & Requirement \\
+\midrule
+\endfirsthead
+\toprule
+Configuration & Frames per second & Total latency, 95th percentile & Requirement \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+MoveNet Lightning, GPU & 29.57 & 27 ms & NFR-P2 22 fps, NFR-P3 65 ms \\
+\end{longtable}
+}
+
+From the deciding sweep in 4.2.3, on the target handset. The frame rate is at the camera's own 30 fps ceiling and the latency has 2.4 times the bound in hand. The engine comparison that produced this configuration, and the seven it was chosen over, is in 4.2.
+
+\textbf{Across the ten recorded sets, 9,893 frames were analysed and the engine returned a pose on every one of them.} No frame was lost to detection failure, in any exercise, in any position, including the bottom of a squat and the floor-level positions of the push-up and plank.
+
+\subsubsection*{The frame rate over ten continuous minutes}
+
+NFR-P2 is a floor for a set. NFR-P4 asks whether that floor survives a session, which is a different question: the handset gets hot, and a thermal limit that arrives in the ninth minute does not show up in a sixty-second measurement.
+
+{\small
+\setlength{\LTpre}{6pt}\setlength{\LTpost}{8pt}
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr 0.311\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.689\textwidth-2\tabcolsep\relax}}
+\caption{The frame rate across a ten-minute run, in thirty-second windows}\\
+\toprule
+Window & Frames per second \\
+\midrule
+\endfirsthead
+\toprule
+Window & Frames per second \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+0 to 90 s & 29.83, 29.77, 29.70, 29.63 \\
+120 to 330 s & 26.33, 25.97, 26.47, 25.23, 26.47, 26.23, 25.80, 26.07 \\
+360 to 570 s & 25.00, 25.20, 26.47, 25.20, 25.57, 26.27, 25.63, 25.07 \\
+\end{longtable}
+}
+
+15,961 frames over 600.1 s on the shipped configuration, MoveNet Lightning on the GPU delegate. \textbf{The lowest of the twenty complete windows is 25.00 fps, against a floor of 22.} The run holds the floor throughout with three frames per second in hand at its worst.
+
+The shape of the decline is the finding rather than the figure. The first two minutes run at the camera's 30 fps ceiling; the rate then settles into a band between 25.0 and 26.5 and stays there for the remaining eight minutes. Median inference time rose from 16 ms in the first minute to 27 ms in the last, battery temperature from 33.8 to 39.0 degrees, and the Android thermal status reached 2. \textbf{The device throttles, the throttling arrives inside the first three minutes, and it then stops getting worse.} The 95th percentile of the whole per-frame path was 40 ms hot, against the 65 ms NFR-P3 allows, so per-frame latency stays inside its own requirement at the temperature the frame rate settles at.
+
+\textbf{The run completed with no crash and no restart}, which is NFR-A5.
+
+\textbf{What this run is not.} The benchmark's framing gate reached its two-minute cap without confirming a subject, and the summary records that in its own note: both knees cleared the visibility floor in 2.0 per cent of frames. Every landmark column in this run is therefore void, and none is quoted.
+
+The frame rate is not, and the run itself shows why. MoveNet Lightning is a single-pose network of fixed cost: it runs the same arithmetic on a 192 by 192 input whether or not anybody is in it. The windows bear that out. The window at 480 s, the only one in the second half with the subject visible in any quantity at 9.4 per cent of frames, reads 25.57 fps, sitting between its neighbours at zero per cent on 25.20 and 26.27. Across the twenty windows the frame rate tracks temperature and shows no relationship to whether a body is in shot.
+
+\textbf{Why the gate did not open is worth recording}, because it is a property of the instrument rather than of the camera placement. The benchmark requires \textbf{both} knees above the floor for a continuous second and a half. The product requires the better of the two, which 6.2 explains: in the sagittal view this system declares, the far knee is occluded by the near leg for much of a repetition. One knee or the other cleared the floor in 43.3 per cent of frames here. The subject was in shot in the posture the product asks for, and the benchmark asked for a different one.
+
+\subsection{Repetition counting}
+\label{sec:9.4.2}
+
+{\small
+\setlength{\LTpre}{6pt}\setlength{\LTpost}{8pt}
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr 0.575\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.223\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.202\textwidth-2\tabcolsep\relax}}
+\caption{Repetition counting across the seven counting sets}\\
+\toprule
+Set & Performed & Counted \\
+\midrule
+\endfirsthead
+\toprule
+Set & Performed & Counted \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+\texttt{SQ-\allowbreak{}CLEAN}, \texttt{SQ-\allowbreak{}SHALLOW}, \texttt{SQ-\allowbreak{}LEAN} & 10 each & 10 each \\
+\texttt{PU-\allowbreak{}CLEAN}, \texttt{PU-\allowbreak{}SAG}, \texttt{PU-\allowbreak{}PIKE}, \texttt{PU-\allowbreak{}RANGE} & 10 each & 10 each \\
+\end{longtable}
+}
+
+\textbf{Seven of seven counting sets exact, for a repetition count error of zero against the NFR-A3 allowance of one.}
+
+The three plank sets report duration rather than a count, at 44.7, 47.6 and 47.2 seconds, each accumulated continuously so that a trainee who ends the set while still in position gets the time they held.
+
+\subsection{Fault detection}
+\label{sec:9.4.3}
+
+Each set scripts one condition. A fault is expected in the set that scripts it and must not appear in the sets that do not.
+
+{\footnotesize
+\setlength{\LTpre}{6pt}\setlength{\LTpost}{8pt}
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr 0.382\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.277\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.215\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.126\textwidth-2\tabcolsep\relax}}
+\caption{Fault detection across the six faults, in the sets that carry them and the sets that do not}\\
+\toprule
+Fault & Raised in its condition & Raised elsewhere & Precision \\
+\midrule
+\endfirsthead
+\toprule
+Fault & Raised in its condition & Raised elsewhere & Precision \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+\texttt{SQ\_\allowbreak{}DEPTH\_\allowbreak{}INSUFFICIENT} & 10 of 10 repetitions & 0 & 1.000 \\
+\texttt{SQ\_\allowbreak{}FORWARD\_\allowbreak{}LEAN} & 44 frames & 0 & 1.000 \\
+\texttt{PU\_\allowbreak{}HIP\_\allowbreak{}SAG} & 273 frames & 0 & 1.000 \\
+\texttt{PU\_\allowbreak{}HIP\_\allowbreak{}PIKE} & 199 frames & 9 & 0.957 \\
+\texttt{PL\_\allowbreak{}HIP\_\allowbreak{}SAG} & 1,034 frames & 13 & 0.988 \\
+\texttt{PL\_\allowbreak{}HIP\_\allowbreak{}PIKE} & 728 frames & 0 & 1.000 \\
+\textbf{The five faults judged per frame} & \textbf{2,278 frames} & \textbf{22} & \textbf{0.990} \\
+\end{longtable}
+}
+
+\textbf{All six faults meet NFR-A1}, which requires a precision of 0.90 or better per fault. The lowest is 0.957.
+
+The aggregate row covers the five faults judged frame by frame. Squat depth is judged once per repetition, so its 10 of 10 is not a quantity that can be added to a frame count. Read the aggregate for what it is: the plank supplies 1,762 of its 2,278 frames, so 0.990 is mostly a statement about the plank.
+
+\textbf{Every scripted condition was detected}, six of six, giving a recall of 1.00 at the level the recordings support. Squat depth, which is judged once per repetition, was detected on 10 of 10 shallow repetitions and on none of the 10 clean ones.
+
+Two results inside that table are worth drawing out.
+
+\textbf{Sag and pike separate completely in both exercises.} In all four of those sets the opposite fault fired on exactly zero frames. These are two deviations of the same body line measured by the same function with opposite signs, and they are the pair most at risk of bleeding into one another. The bands placed against measured neutral in 6.4.3 are what produced the separation.
+
+\textbf{Squat depth separates with room to spare.} Clean repetitions measured +0.012 to +0.038 and shallow ones -0.083 to -0.112, leaving a gap of 0.045 with no observation in it. The threshold at -0.0209 sits inside that gap.
+
+The 22 frames in the false-positive column are two episodes: 13 frames in the clean plank, which is 1 per cent of a 44.7 second hold, and 9 frames in \texttt{PU-\allowbreak{}RANGE}, which is 1 per cent of that set.
+
+\subsection{The feedback path on the device}
+\label{sec:9.4.4}
+
+Fourteen sets were performed on the handset with the application running, and the session record timestamps the cue path. Over the twelve cues spoken by the current build:
+
+{\small
+\setlength{\LTpre}{6pt}\setlength{\LTpost}{8pt}
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr 0.429\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.317\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.254\textwidth-2\tabcolsep\relax}}
+\caption{The feedback path on the device, measured against the budget in 3.4.1}\\
+\toprule
+Stage & Measured & Allocation in 3.4.1 \\
+\midrule
+\endfirsthead
+\toprule
+Stage & Measured & Allocation in 3.4.1 \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+Trigger policy, confirmation to selection & 0 ms & 5 ms \\
+Selection to audio dispatch & 12 to 20 ms, median 16 & 60 ms \\
+\end{longtable}
+}
+
+The policy figure is zero because the decision is a map lookup and two counter comparisons. The dispatch figure is the cost of starting playback of a clip already resident in memory, which is what 4.4 chose the pre-rendered bank to obtain.
+
+\textbf{This is a lower bound on NFR-P1 rather than the requirement itself}, and the record says so in its own text. Two intervals sit outside it. Before it, the confirmation window of three frames, which at the 29.76 to 29.99 fps these sets ran at is about 100 ms. After it, the platform path from the play call to the first audible sample, which is not instrumented.
+
+Adding the measured parts to the frame window gives roughly 115 ms from a fault becoming present to audio being dispatched, against a budget of 300 ms. That leaves about 185 ms for the platform audio tail, which is substantially more than the 60 ms the budget allocates to the whole audio stage. The requirement is not demonstrated, and the margin available for the part that was not measured is large.
+
+One earlier configuration is worth contrasting. On a set recorded before the debounce was removed, the same path measured 470 to 479 ms, of which 415 to 430 ms was the policy waiting out a timer that duplicated the confirmation window in the wrong unit. 6.5 records why that control was set to zero; the difference between 476 ms and 16 ms is what it was costing.
+
+\subsection{Determinism and the test suite}
+\label{sec:9.4.5}
+
+{\small
+\setlength{\LTpre}{6pt}\setlength{\LTpost}{8pt}
+\begin{longtable}{>{\raggedright\arraybackslash}p{\dimexpr 0.500\textwidth-2\tabcolsep\relax}>{\raggedright\arraybackslash}p{\dimexpr 0.500\textwidth-2\tabcolsep\relax}}
+\caption{Determinism and the test suite}\\
+\toprule
+ & Result \\
+\midrule
+\endfirsthead
+\toprule
+ & Result \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+Assessment module & 85 tests, 0 failures \\
+Client module & 9 tests, 0 failures \\
+\end{longtable}
+}
+
+NFR-A4 requires that identical landmark input produces identical output. The suite depends on it: every test in the assessment module replays a fixed sequence and asserts an exact verdict, and the suite would be impossible to write if the evaluator were not deterministic.
+
+The tests load \textbf{the real specification files} rather than copies. A specification edited into a state the schema forbids fails the build, which is the only arrangement under which the format's rules stay true of the files that ship.
+
+\section{What the Proof of Concept Does Not Establish}
+\label{sec:9.5}
+
+This section is the reason the rest of the chapter can be read at face value.
+
+\textbf{NFR-P1 is bounded below rather than demonstrated.} 9.4.4 measures the confirmation-to-dispatch interval on the device and leaves the platform audio tail uninstrumented. The margin between what was measured and the requirement is wide, and a wide margin is not a measurement.
+
+\textbf{NFR-P4 is met on an empty frame.} The ten-minute run in 9.4.1 holds the floor on the shipped configuration, and the reasoning there is that the measurement does not depend on a subject being present. That reasoning is supported by this run's own windows and by the fixed cost of the network, and it is still reasoning rather than a run made the other way.
+
+\textbf{The dataset is one subject in one session.} Every figure in 9.4 describes one performer, one room, one camera position and one set of clothing. The faults were performed deliberately, and a deliberate fault is larger than one that appears under fatigue, so the detection rates are an upper bound rather than an estimate.
+
+\textbf{The thresholds were set from recordings by the same performer.} The tolerances in 6.4.2 come from earlier sessions with the same subject, so the evaluation above is not independent of the values it evaluates. The sets in 9.3.1 are different performances on a different day, which is weaker circularity than scoring the clips a threshold was fitted to, and it is not the same thing as an independent test.
+
+\textbf{A trainer has reviewed the clips; the independent labelling pass has not happened, and the two are different things.} A certified trainer watched the ten recordings and confirmed that the fault performed in each is the fault the set scripts. That is worth having: it establishes that the conditions are recognisable as the deviations they are named after, and that the fault set is the one a practitioner would look for.
+
+It is not the blind pass 10.4 specifies. The trainer saw clips already labelled by condition, was not asked to annotate repetition by repetition, and no agreement figure was computed, because there is nothing to compute one from. The ground truth behind every figure in 9.4 is therefore still the scripted condition rather than an independent expert judgement, and what a blind labeller sets is what a later version of this report will carry.
+
+\textbf{Precision and recall are reported at the unit the recordings support.} Each set carries one condition label rather than a per-frame annotation, so recall is computed per set and, where a fault is judged per repetition, per repetition. A frame-level recall figure is not available and none is quoted.
+
+\textbf{One compound case is reported rather than scored.} In \texttt{SQ-\allowbreak{}LEAN} the depth fault raised on 8 of 10 repetitions alongside the lean it scripted. The measurements say both deviations were genuinely present, because pitching the torso forward shortened the squat, so these are not false positives. They are also not what the set scripted, so they are excluded from the precision calculation in either direction and named here instead. 4.5.4 records that compound faults are not modelled.
+
+\textbf{Nothing here measures the engine's angular accuracy.} The figures establish that the system is repeatable and that it separates the conditions it was given. They do not establish that a hip or a knee is where the model says it is, and no run in this report measures that.

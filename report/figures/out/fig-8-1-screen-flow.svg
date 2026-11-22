@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <style>
+  text { font-family: Segoe UI, Calibri, Helvetica Neue, Arial, sans-serif; fill: #16323D; }
+  .t    { font-size: 15px; }
+  .tb   { font-size: 15px; font-weight: 600; }
+  .s    { font-size: 12.5px; fill: #4A646F; }
+  .sb   { font-size: 12.5px; font-weight: 600; fill: #4A646F; }
+  .e    { font-size: 12.5px; fill: #4A646F; }
+  .h    { font-size: 16px; font-weight: 600; }
+  .m    { font-family: Consolas, DejaVu Sans Mono, Courier New, monospace; font-size: 12.5px; }
+  .mb   { font-family: Consolas, DejaVu Sans Mono, Courier New, monospace; font-size: 12.5px; font-weight: 600; }
+  .cap  { font-size: 12.5px; fill: #4A646F; font-style: italic; }
+  .box  { fill: #F2F7F9;  stroke: #16323D;    stroke-width: 1.4; }
+  .boxw { fill: #FDF0EB;  stroke: #E8663C;  stroke-width: 1.4; }
+  .boxp { fill: #FFFFFF; stroke: #16323D;    stroke-width: 1.4; }
+  .boxq { fill: #FFFFFF; stroke: #C7D6DC;   stroke-width: 1.4; }
+  .boxd { fill: none;    stroke: #4A646F;  stroke-width: 1.2; stroke-dasharray: 5 4; }
+  .boxk { fill: #16323D;   stroke: #16323D;    stroke-width: 1.4; }
+  .reg  { fill: none;    stroke: #C7D6DC;   stroke-width: 1.2; }
+  .ln   { stroke: #16323D;   stroke-width: 1.4; fill: none; }
+  .lnm  { stroke: #4A646F; stroke-width: 1.2; fill: none; }
+  .lnh  { stroke: #C7D6DC;  stroke-width: 1.2; fill: none; }
+  .lna  { stroke: #E8663C; stroke-width: 1.6; fill: none; }
+  .lnd  { stroke: #4A646F; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+  .life { stroke: #C7D6DC;  stroke-width: 1.2; stroke-dasharray: 4 4; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9.2" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0.8 L10,5 L0,9.2 z" fill="#16323D"/></marker>
+    <marker id="am" viewBox="0 0 10 10" refX="9.2" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0.8 L10,5 L0,9.2 z" fill="#4A646F"/></marker>
+    <marker id="aa" viewBox="0 0 10 10" refX="9.2" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0.8 L10,5 L0,9.2 z" fill="#E8663C"/></marker>
+    <marker id="ao" viewBox="0 0 10 10" refX="9.6" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0.5,0.8 L10,5 L0.5,9.2" fill="none" stroke="#4A646F" stroke-width="1.5"/></marker>
+    <marker id="tri" viewBox="0 0 10 10" refX="9.6" refY="5" markerWidth="11" markerHeight="11" orient="auto-start-reverse"><path d="M0.5,0.6 L10,5 L0.5,9.4 z" fill="#FFFFFF" stroke="#16323D" stroke-width="1.2"/></marker>
+  </defs>
+  <rect x="0" y="0" width="1200" height="630" fill="#FFFFFF"/>
+  <rect x="60" y="120" width="170" height="70" rx="4" class="boxp"/>
+  <text x="145.0" y="148" class="sb" text-anchor="middle">S1</text>
+  <text x="145.0" y="170" class="tb" text-anchor="middle">Home</text>
+  <rect x="280" y="120" width="170" height="70" rx="4" class="boxp"/>
+  <text x="365.0" y="148" class="sb" text-anchor="middle">S2</text>
+  <text x="365.0" y="170" class="tb" text-anchor="middle">Exercise selection</text>
+  <rect x="500" y="120" width="170" height="70" rx="4" class="boxk"/>
+  <text x="585.0" y="148" class="sb" text-anchor="middle" fill="#9FD3DE">S3</text>
+  <text x="585.0" y="170" class="tb" text-anchor="middle" fill="#FFFFFF">Set-up</text>
+  <rect x="720" y="120" width="170" height="70" rx="4" class="boxk"/>
+  <text x="805.0" y="148" class="sb" text-anchor="middle" fill="#9FD3DE">S4</text>
+  <text x="805.0" y="170" class="tb" text-anchor="middle" fill="#FFFFFF">Live session</text>
+  <rect x="940" y="120" width="170" height="70" rx="4" class="boxk"/>
+  <text x="1025.0" y="148" class="sb" text-anchor="middle" fill="#9FD3DE">S5</text>
+  <text x="1025.0" y="170" class="tb" text-anchor="middle" fill="#FFFFFF">Set summary</text>
+  <line x1="230" y1="155" x2="280" y2="155" class="ln" marker-end="url(#a)"/>
+  <line x1="450" y1="155" x2="500" y2="155" class="ln" marker-end="url(#a)"/>
+  <line x1="670" y1="155" x2="720" y2="155" class="ln" marker-end="url(#a)"/>
+  <line x1="890" y1="155" x2="940" y2="155" class="ln" marker-end="url(#a)"/>
+  <text x="255" y="146" class="e" text-anchor="middle">Start</text>
+  <path d="M500,180 H472 V218 H650 V194" class="lnm" marker-end="url(#am)"/>
+  <text x="660" y="214" class="e" text-anchor="start">How to do this - the guide, over the set-up screen</text>
+  <path d="M1025,190 V252 H590 V194" class="lna" marker-end="url(#aa)"/>
+  <text x="800" y="270" class="e" text-anchor="middle">Repeat set - straight back to set-up</text>
+  <path d="M1025,120 V66 H145 V116" class="lnm" marker-end="url(#am)"/>
+  <text x="580" y="58" class="e" text-anchor="middle">Finish</text>
+  <rect x="280" y="380" width="170" height="70" rx="4" class="boxp"/>
+  <text x="365.0" y="408" class="sb" text-anchor="middle">S6</text>
+  <text x="365.0" y="430" class="tb" text-anchor="middle">Session history</text>
+  <rect x="500" y="380" width="170" height="70" rx="4" class="boxp"/>
+  <text x="585.0" y="408" class="sb" text-anchor="middle">S7</text>
+  <text x="585.0" y="430" class="tb" text-anchor="middle">Session detail</text>
+  <rect x="720" y="380" width="170" height="70" rx="4" class="boxp"/>
+  <text x="805.0" y="408" class="sb" text-anchor="middle">S8</text>
+  <text x="805.0" y="430" class="tb" text-anchor="middle">Fault detail</text>
+  <line x1="450" y1="415" x2="500" y2="415" class="ln" marker-end="url(#a)"/>
+  <line x1="670" y1="415" x2="720" y2="415" class="ln" marker-end="url(#a)"/>
+  <rect x="60" y="380" width="170" height="70" rx="4" class="boxp"/>
+  <text x="145.0" y="408" class="sb" text-anchor="middle">S9</text>
+  <text x="145.0" y="430" class="tb" text-anchor="middle">Settings</text>
+  <line x1="110" y1="190" x2="110" y2="380" class="lnm" marker-end="url(#am)"/>
+  <text x="122" y="300" class="e" text-anchor="start">Settings</text>
+  <path d="M230,165 H254 V415 H278" class="lnm" marker-end="url(#am)"/>
+  <text x="262" y="356" class="e" text-anchor="start">History</text>
+  <path d="M190,190 V330 H585 V376" class="lna" marker-end="url(#aa)"/>
+  <text x="600" y="326" class="e" text-anchor="start">Last session - straight to the set just finished</text>
+  <text x="60" y="500" class="tb" text-anchor="start">S3 to S5 are the training path:</text>
+  <text x="336" y="500" class="s" text-anchor="start">a dark surface, read in the upper half of the display from across a room. The rest are ordinary light screens used at arm's length.</text>
+  <text x="60" y="560" class="cap" text-anchor="start">Every route into a set passes through S3, which advises on framing without blocking. After a set the shortest path is back to S3 rather than</text>
+  <text x="60" y="582" class="cap" text-anchor="start">Home, because the common case is another set of the same exercise and the user is still across the room. Home opens the last set in one tap.</text>
+
+</svg>

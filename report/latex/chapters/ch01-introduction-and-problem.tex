@@ -1,0 +1,113 @@
+\chapter{Introduction and Problem}
+\label{chap:1}
+
+\section{Motivation}
+\label{sec:1.1}
+
+Most people who train do so without anyone watching them. That is the ordinary case rather than the deprived one, and it is the case this project is built for.
+
+In Vietnam, 72 percent of people who exercise pay for it in some form, and 90 percent of those surveyed watch sport or fitness video online, from a nationwide survey of 1,406 respondents aged 13 to 65 conducted in May 2021 (Q and Me consumer survey, 2021)\cite{qandme2021fitness}. People are already paying for training and already looking for guidance through a screen. What they are not getting is anyone who can see them while they move.
+
+The supervised alternative is becoming harder to reach rather than easier. The number of gyms nationwide fell from 105 to 88 in under a year (Q and Me retail report 2025, via CafeF)\cite{qandme2025retail}. Elite Fitness closed every branch in Ho Chi Minh City and Kickfit went from twelve locations to two (CafeF, 3 April 2026)\cite{cafef2026gyms}. Over the same period membership prices rose by about 4 percent while customers reduced what they spent (Ken Research, via CafeF)\cite{kenresearch2025membership}.
+
+The arithmetic of personal training explains why. A monthly training budget of 300,000 to 3,000,000 VND is typical (Coc Coc survey, via CafeF)\cite{coccoc2025budget}, while a single session with a personal trainer is advertised at 250,000 to 1,500,000 VND by the gym chains themselves. Those advertised prices are not a survey, and they are asking prices, not what people pay. The order of magnitude is still the point. For most of that budget range, one or two supervised sessions a month exhausts it entirely. Continuous supervision is not a choice the majority is declining. It is a choice the majority does not have.
+
+A phone, by contrast, is already in the room. It has a camera good enough to see a whole body, a processor fast enough to interpret what it sees, and a speaker the user is already wearing headphones for. The question this project asks is what a phone can usefully say to someone in the middle of a set.
+
+\section{Problem Statement}
+\label{sec:1.2}
+
+A person training without a coach cannot see themselves, and this is a physical fact rather than a figure of speech. It holds across all three movements this project covers, and it gets worse as it goes.
+
+In a squat the eyes face forward while the failures that matter occur at the hip, the knee and the torso, none of which is in view. In a push-up the head is down, so the line of the body behind it is out of sight entirely. In a plank the fault is a slow drift of the hips across thirty seconds or more, and the person holding the position has no reference for where their hips were when they started.
+
+In each case the correction has to arrive while the movement is still happening. A squat repetition lasts two to three seconds, and after that there is nothing left to correct.
+
+Three consequences follow, and they compound.
+
+Faults persist because they are invisible to the person committing them. Someone who stops short of depth or lets the torso pitch forward has no signal that anything is wrong. The movement feels normal, because it is the movement they have always performed.
+
+The cost arrives late. Repeated technique faults accumulate into injury rather than causing it immediately, which removes exactly the feedback that would otherwise prompt a correction. By the time the knee hurts, the thousand repetitions that produced it are already done.
+
+There is no record of how well the work was done. Logging that three sets of ten were completed says nothing about whether they were completed well, so there is no basis on which to adjust the programme.
+
+A human coach solves all of this, and four separate things stand between most people and one.
+
+\begin{itemize}
+\item Price. As 1.1 set out, one or two sessions a month spends a typical monthly training budget in full.
+\item Schedule. A coach is available when the coach is available, so training happens where two calendars overlap rather than when the user decides to train.
+\item Place. The coach is at the gym. Training at home, in a hotel room, or in the twenty minutes before work is training without them.
+\item Fit. A coach is a person. Some talk through the whole set, some never explain why, and some are better with experienced lifters than with beginners. Changing coach means paying to begin again, and a beginner who is reluctant to be watched closely while they are still bad at the movement may not start at all.
+\end{itemize}
+
+None of these is a complaint about coaching. They are the reasons a motivated person ends up training alone despite wanting help.
+
+The remedies available to someone training alone are each incomplete in their own way. A mirror gives one angle, and only while the user is looking into it, which is not the moment the fault occurs. Recording a set and watching it afterwards genuinely works, but it is post hoc: the repetitions it describes are finished and cannot be changed.
+
+What is missing is something already where the user is at the moment they decide to train. It watches the movement, not the clock. It costs no more to use a second time. And it stays quiet when there is nothing worth saying. That is the problem this project addresses.
+
+\section{Objectives}
+\label{sec:1.3}
+
+Six objectives for this phase, each stated so that its completion can be checked rather than asserted.
+
+\textbf{O1. On-device perception.} A pose estimation pipeline running entirely on the mobile device, reaching a frame rate and a per-frame latency sufficient for feedback delivered while the user is still moving. Running on the device, not on a server, is itself part of the objective. It bounds latency, it removes a per-user running cost, and it keeps the user's video on the user's phone.
+
+\textbf{O2. Movement assessment.} A layer that counts repetitions and detects technique faults for push-up, plank and bodyweight squat, designed so that adding a new exercise does not require hand-written rules.
+
+\textbf{O3. Immediate spoken feedback.} A corrective cue delivered as speech, drawn from a bank of pre-authored lines, with no dependency on a large language model in the path between observing a fault and saying something about it.
+
+\textbf{O4. The application, a server service and a user profile.} A mobile application carrying the session flow and the interface, a server-side service, and a user profile that stores session history.
+
+\textbf{O5. Traceable fault definitions and a labelling protocol.} The technique fault set comes from a taxonomy that expert trainers already annotated in published work. None of it was invented here. With it comes a labelling protocol: the data used for evaluation is confirmed independently by a certified trainer.
+
+\textbf{O6. A labelled dataset and a testing procedure.} A labelled video dataset, and a written procedure for measuring fault detection accuracy, end-to-end latency and session stability on real devices.
+
+\section{Scope}
+\label{sec:1.4}
+
+\subsection{In scope for this phase}
+\label{sec:1.4.1}
+
+Three exercises: the bodyweight squat, the push-up and the front plank. All three are performed at floor level, need no equipment, can be recorded in any room, and are readable from a single viewpoint.
+
+A single camera in a single position. The user places the phone to one side and the system reads the movement from that view. No second camera, no depth sensor and no wearable.
+
+One target device. The system is built and measured on a Samsung Galaxy Z Flip5 running Android, with a Snapdragon 8 Gen 2 for Galaxy and 8 GB of memory.
+
+Feedback during the set, delivered as speech. The screen is secondary during a set by necessity rather than by preference: the camera faces the user, so the display does not.
+
+\subsection{Where the boundary is drawn}
+\label{sec:1.4.2}
+
+Two kinds of thing sit outside this phase, for two different reasons, and the distinction matters because one is permanent and the other is not.
+
+\textbf{Excluded permanently, on domain and safety grounds.} Nutrition and meal planning, which is a different knowledge domain with its own safety requirements and is out of both phases of this project rather than deferred. Medical advice and injury diagnosis likewise: the system observes movement, it cannot distinguish a technique fault from a structural limitation or an existing injury, and it does not attempt to.
+
+\textbf{Deferred to the second phase.} Explaining a fault in language, answering questions between sets, grounding those answers in retrieved domain material, and generating a training programme that adapts over months. Nothing in this phase produces language at all. These are the parts of the product that need the assessment layer underneath them to be worth building, which is why they come second rather than first.
+
+\section{Contributions}
+\label{sec:1.5}
+
+What this phase delivers, stated as four things that did not exist before it.
+
+A working perception and assessment path that runs entirely on a commodity phone, turning a camera frame into a spoken correction without a network connection and without the user's video leaving the device.
+
+A declarative format for describing an exercise, such that adding one is an act of authoring rather than programming. Three exercises of two different kinds, a repeated movement and a static hold, run through one evaluator that contains no code specific to any of them.
+
+A fault set traced to published criteria, with the evidence that a deviation is a recognised fault recorded separately from the evidence for the threshold at which it fires. Separating those two claims is what makes the state of each one visible: five of the six faults carry a cited criterion, one does not, and no threshold in the system carries a source at all.
+
+A measurement procedure specific enough to be repeated by someone else, and the data collected under it.
+
+\section{Report Structure}
+\label{sec:1.6}
+
+The report is in three parts.
+
+\textbf{What the problem is, and what the system must do.} Chapter 2 surveys five commercial products and the research background, and establishes where the fault definitions come from. Chapter 3 states the requirements, and derives the response-time budget that every performance figure afterwards is measured against.
+
+\textbf{Why the system is built the way it is.} Chapter 4 is the design justification: six decisions, each with the alternatives compared, the evidence weighed, and the condition that would reverse it. Chapter 5 gives the architecture, Chapter 6 the movement assessment design, Chapter 7 the detailed design, and Chapter 8 the interface.
+
+\textbf{What was built, and what it does.} Chapter 9 reports the proof of concept and its measurements. Chapter 10 gives the test strategy and the evaluation method, including the blind labelling protocol. Chapter 11 reports the project against its plan, states the divergences from the registration, and sets the scope of the second phase.
+
+Appendix A describes the measuring instrument and names every run this report cites, so that any figure in it can be recomputed from the data that produced it.

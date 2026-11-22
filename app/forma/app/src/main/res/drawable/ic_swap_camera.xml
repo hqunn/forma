@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Switch between the front and rear lens.
+
+  Two arrows turning around a lens. The icon this replaced was a camera body
+  with a rotation arrow tucked inside it, which at 26dp resolved to a grey
+  smudge: too much detail for the size it is actually drawn at.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="24" android:viewportHeight="24">
+
+    <!-- over the top, left to right -->
+    <path android:strokeColor="#FFFFFFFF" android:strokeWidth="2.1"
+        android:strokeLineCap="round" android:fillColor="#00000000"
+        android:pathData="M4.5,9.3 A8,8 0 0,1 19.5,9.3" />
+    <path android:fillColor="#FFFFFFFF"
+        android:pathData="M20.75,12.64 L17.38,9.51 L21.32,8.07 Z" />
+
+    <!-- under the bottom, right to left -->
+    <path android:strokeColor="#FFFFFFFF" android:strokeWidth="2.1"
+        android:strokeLineCap="round" android:fillColor="#00000000"
+        android:pathData="M19.5,14.7 A8,8 0 0,1 4.5,14.7" />
+    <path android:fillColor="#FFFFFFFF"
+        android:pathData="M3.25,11.36 L6.62,14.49 L2.68,15.93 Z" />
+
+    <!-- the lens -->
+    <path android:fillColor="#FFFFFFFF"
+        android:pathData="M9,12 A3,3 0 1,1 15,12 A3,3 0 1,1 9,12 Z" />
+</vector>

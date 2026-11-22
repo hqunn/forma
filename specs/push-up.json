@@ -1,0 +1,222 @@
+{
+ "id": "push-up",
+ "version": "0.3.0",
+ "display_name": "Push-up",
+ "status": "draft",
+ "notes": [
+  "Coordinate convention: normalised image coordinates. y increases downward.",
+  "Every threshold here is provisional. None was derived from recorded clips.",
+  "Framing was settled before the fault set, following the finding recorded in",
+  "4.5: the declared framing bounds the observable fault set.",
+  "v0.2.0 (2026-10-31): PU_HIP_SAG now carries a taxonomy source, the Functional",
+  "Movement Screen trunk stability push-up criterion. The other two remain open;",
+  "see docs/specs/SOURCES.md for what was searched and what was not found."
+ ],
+ "excluded_faults": [
+  {
+   "code": "PU_ELBOW_FLARE",
+   "description": "Elbows travelling out to roughly ninety degrees from the torso rather than staying tucked.",
+   "reason": "Not observable in the framing this exercise declares. Elbow flare is the angle between the upper arm and the torso measured about the long axis of the body, which needs a frontal or overhead view. This specification declares a sagittal view, in which the near arm occludes the far arm and the flare angle projects onto almost nothing.",
+   "why_not_change_the_framing": "Hip sag, hip pike and range of motion all require the sagittal view, and those are the three faults that remain. This is the same trade the squat made with SQ_KNEE_VALGUS, and it is resolved the same way for the same reason.",
+   "status": "excluded_from_mvp",
+   "revisit_when": "A second framing is introduced. An overhead view would serve both this and SQ_KNEE_VALGUS, which makes the two exclusions one future piece of work rather than two.",
+   "decided": "2026-10-31"
+  }
+ ],
+ "landmarks": [
+  "LEFT_SHOULDER",
+  "RIGHT_SHOULDER",
+  "LEFT_ELBOW",
+  "RIGHT_ELBOW",
+  "LEFT_WRIST",
+  "RIGHT_WRIST",
+  "LEFT_HIP",
+  "RIGHT_HIP",
+  "LEFT_KNEE",
+  "RIGHT_KNEE",
+  "LEFT_ANKLE",
+  "RIGHT_ANKLE"
+ ],
+ "framing": {
+  "view": "sagittal",
+  "distance_m": [
+   2.0,
+   4.0
+  ],
+  "camera_height_m": [
+   0.2,
+   0.8
+  ],
+  "min_visibility": 0.45,
+  "required_visible": [
+   "LEFT_SHOULDER",
+   "LEFT_ELBOW",
+   "LEFT_WRIST",
+   "LEFT_HIP",
+   "LEFT_ANKLE"
+  ],
+  "reminders": [
+    "Please keep your whole body in frame, feet included",
+    "Please set up side on to the camera, not facing it",
+    "Please keep the phone low, near floor height"
+  ],
+  "guidance": "Press start, then get down side on to the camera, far enough back to fit.",
+  "framing_note": "A lower camera than the squat uses, because the subject is horizontal. This is why framing is declared per exercise rather than once for the app."
+ },
+ "rep_driver": {
+  "signal": {
+   "fn": "angle",
+   "args": [
+    "LEFT_SHOULDER",
+    "LEFT_ELBOW",
+    "LEFT_WRIST"
+   ],
+   "aggregate": "mean_of_sides"
+  },
+  "reports": {
+   "type": "count"
+  },
+  "direction": "decreasing_is_descent",
+  "smoothing": {
+   "type": "median",
+   "window_frames": 3
+  },
+  "hysteresis_rationale_old": "Absolute since v0.4.0, with the calibration step these bounds used to resolve against. An elbow locked out at the top of a push-up reads 170 to 180 degrees; entering the descent at 155 and completing at 165 is the same band the squat uses, for the same reason.",
+  "hysteresis_rationale": "Re-derived from the ten scripted sets, replacing the 130 and 142 set earlier the same week. Those were themselves a correction, and they failed the same way for the same reason: PU-CLEAN counted 6 repetitions of 10 performed, because the tops in that set ran 138.8 to 160.7 against a closing bound of 142, so three of ten never cleared it. The earlier session had tops of 145 to 158, which is why 142 looked safe when it was chosen. Same movement, same performer, different day, and the margin disappeared. Across all four push-up sets the lowest top is 138.8 degrees and the deepest bottom is 76.3. Entry moves to 120 and the close to 135, leaving 3.8 degrees under the lowest top and 43.7 above the deepest bottom, and all four sets then count 10 of 10. Three corrections to one parameter is the evidence that the parameter is the wrong shape, not that the number was wrong. A closing rule relative to the start of the repetition would not have failed any of the three times. It is not built, and this bound should be read as holding for this performer until something says otherwise.",
+  "hysteresis": {
+   "descent_enter": {
+    "type": "absolute",
+    "value": 120.0
+   },
+   "ascent_exit": {
+    "type": "absolute",
+    "value": 135.0
+   }
+  },
+  "min_rep_ms": 600,
+  "max_rep_ms": 6000
+ },
+ "phases": [
+  {
+   "name": "top",
+   "entered_when": "driver >= ascent_exit"
+  },
+  {
+   "name": "descent",
+   "entered_when": "driver < descent_enter and driver decreasing"
+  },
+  {
+   "name": "bottom",
+   "entered_when": "driver at local minimum, within 10 degrees of it"
+  },
+  {
+   "name": "ascent",
+   "entered_when": "driver increasing and below ascent_exit"
+  }
+ ],
+ "faults": [
+  {
+   "code": "PU_HIP_SAG",
+   "description": "The hips dropped below the line from the shoulders to the ankles.",
+      "coaching": {
+        "fix": "Squeeze your glutes and tighten your stomach so the body moves as one piece rather than folding in the middle. If the hips still drop, come down onto your knees and keep the same straight line from shoulder to knee."
+      },
+   "phases": [
+    "top",
+    "descent",
+    "bottom",
+    "ascent"
+   ],
+   "measure": {
+    "fn": "signed_offset_from_line",
+    "args": [
+     "LEFT_HIP",
+     "LEFT_SHOULDER",
+     "LEFT_ANKLE"
+    ],
+    "normalise_by": "shoulder_ankle_length",
+    "aggregate": "mean_of_sides"
+   },
+   "operator": "gt",
+   "threshold": {
+    "type": "absolute",
+    "value": 0.03
+   },
+   "min_frames": 5,
+   "provenance": {
+    "status": "taxonomy_confirmed",
+        "plain_source": "The Functional Movement Screen's trunk stability push-up, which asks the body to lift as one unit with no sag through the lower back.",
+    "taxonomy_source": "Cook G, Burton L, Hoogenboom B. Pre-participation screening: the use of fundamental movements as an assessment of function - Part 2. N Am J Sports Phys Ther 2006;1(3):132-139. PMCID PMC2953359. Trunk Stability Push-up, testing instruction: 'The body should be lifted as a unit; no 'lag' should occur in the lumbar spine when performing this push-up.'",
+    "threshold_source": null,
+    "note": "Deliberately absolute rather than relative to a calibration, and the contrast with SQ_FORWARD_LEAN is the reason. Squat lean varies with femur-to-torso proportion and ankle mobility, so it must be per user. A straight body line does not: straightness is scale free and proportion free, and a user whose hips drop is not expressing a body type. Calibrating it would also be unsafe in exactly the way 4.5 warns about, since the calibration hold IS the top of a push-up, so a user who holds it sagging would have sag encoded as their reference. The 0.06 value is provisional: the source criterion is binary, lag in the lumbar spine or none, and converting that to a displacement at which a cue fires is this project's choice. Band reset on 2026-11-05 from replay of data/replay/20261105_020515.mp4, ten repetitions of which the first five were deliberately sagged and the last five held straight. Straight: median -0.0102, sd 0.0154, range -0.0603 to +0.0146 over 246 frames. Sagged: median +0.0538, sd 0.0235, range -0.0029 to +0.0894 over 291 frames. The sag edge is the sagged median less one standard deviation. Against that recording it raises on 79 per cent of the sagged frames where the previous 0.06 raised on 35, and on none of the straight frames. The two distributions overlap, and the overlap is the point: a straight repetition reached +0.0146 and a sagged one dipped to -0.0029, so no threshold separates them completely and this one does not claim to. One subject, one session, and a sag performed on purpose is larger than a sag that appears under fatigue, so the detection rate above is an upper bound. To be confirmed or replaced by the certified trainers who review the fault set. NEUTRAL IS NOT ZERO, 2026-11-05. Replaying a recorded set through the shipped engine, a body the performer held straight measured -0.030 in the plank and -0.010 in the push-up, not 0. A band written symmetrically about zero is therefore asymmetric in use: at plus and minus 0.06 the sag edge sat 0.090 above this performer's neutral while the pike edge sat 0.030 below it, so pike was three times the more sensitive of the two and fired on good form. The edges below are placed against the measured neutral instead."
+   }
+  },
+  {
+   "code": "PU_HIP_PIKE",
+   "description": "The hips rose above the line from the shoulders to the ankles.",
+      "coaching": {
+        "fix": "Let the hips settle until your shoulders, hips and ankles make one line. Looking at the floor a little ahead of your hands usually brings them down on its own."
+      },
+   "phases": [
+    "top",
+    "descent",
+    "bottom",
+    "ascent"
+   ],
+   "measure": {
+    "fn": "signed_offset_from_line",
+    "args": [
+     "LEFT_HIP",
+     "LEFT_SHOULDER",
+     "LEFT_ANKLE"
+    ],
+    "normalise_by": "shoulder_ankle_length",
+    "aggregate": "mean_of_sides"
+   },
+   "operator": "lt",
+   "threshold": {
+    "type": "absolute",
+    "value": -0.05
+   },
+   "min_frames": 5,
+   "provenance": {
+    "status": "pending",
+        "plain_source": "The same standard as its opposite, read the other way: the body is one unit whether the hips drop out of line or rise out of it.",
+    "taxonomy_source": null,
+    "threshold_source": null,
+    "note": "The same measurement as PU_HIP_SAG with the opposite sign. This is why the measurement is a signed offset from the shoulder-to-ankle line rather than the interior hip angle: the interior angle falls below 180 degrees for sag and for pike alike and cannot tell them apart, and the two take opposite cues. NO SOURCE. The FMS trunk stability push-up names lumbar lag, which is sag, and does not name piking. Treating a sourced fault's mirror image as sourced would be an argument from symmetry rather than a citation, and 7.1 does not admit one. It stays pending, and 11.3 keeps it out of headline results until a source is found or it is withdrawn. Band reset on 2026-11-05 from replay of data/replay/20261105_020515.mp4, ten repetitions of which the first five were deliberately sagged and the last five held straight. Straight: median -0.0102, sd 0.0154, range -0.0603 to +0.0146 over 246 frames. Sagged: median +0.0538, sd 0.0235, range -0.0029 to +0.0894 over 291 frames. The sag edge is the sagged median less one standard deviation. Against that recording it raises on 79 per cent of the sagged frames where the previous 0.06 raised on 35, and on none of the straight frames. The two distributions overlap, and the overlap is the point: a straight repetition reached +0.0146 and a sagged one dipped to -0.0029, so no threshold separates them completely and this one does not claim to. One subject, one session, and a sag performed on purpose is larger than a sag that appears under fatigue, so the detection rate above is an upper bound. To be confirmed or replaced by the certified trainers who review the fault set. NEUTRAL IS NOT ZERO, 2026-11-05. Replaying a recorded set through the shipped engine, a body the performer held straight measured -0.030 in the plank and -0.010 in the push-up, not 0. A band written symmetrically about zero is therefore asymmetric in use: at plus and minus 0.06 the sag edge sat 0.090 above this performer's neutral while the pike edge sat 0.030 below it, so pike was three times the more sensitive of the two and fired on good form. The edges below are placed against the measured neutral instead."
+   }
+  }
+ ],
+ "cues": {
+  "PU_HIP_SAG": {
+   "en": {
+    "asset": "cue_pushup_hips_up_en.wav",
+    "text": "Lift your hips."
+   }
+  },
+  "PU_HIP_PIKE": {
+   "en": {
+    "asset": "cue_pushup_hips_down_en.wav",
+    "text": "Drop your hips."
+   }
+  }
+ },
+ "trigger": {
+  "debounce_rationale": "Set to 0 on 2026-11-04. min_frames is already the transient guard, it is per fault, and it is expressed in frames, which is the unit that matters; debounce_ms duplicated it in the wrong unit and at exercise scope. The duplication is not harmless. A fault scoped to one short phase gets one window per repetition, and if that window is shorter than debounce_ms the fault cannot be spoken at any tempo. On set-20261104-232535 the depth fault was raised on four repetitions and spoken on none; repetition 11 carried confidences of 0.888 and 0.831, which clears the floor, so the debounce is what held it. The same defect has been found in more than one fault, which is what makes it a property of the control rather than of any single rule. min_gap_ms and max_cues_per_set remain, and they are what actually stop the system talking too much.",
+  "confidence_floor_rationale": "Lowered from 0.6 to 0.45 on 2026-11-04, with the engine change. The two numbers are not the same quantity: BlazePose reported a visibility and MoveNet reports a keypoint heatmap score. Measured on the same standing pose that night, run sweep-20261104-204742 against single-lite-gpu-20261104-201759, the knee scored a median of 0.761 under MoveNet and 0.986 under BlazePose. The floor is the old one scaled by that ratio, 0.6 x 0.761 / 0.986 = 0.46, rounded down. It is provisional and derived from no source, exactly like every other number in this file. What forced it: on set-20261104-232535, ten deliberately shallow squats raised the depth fault on four repetitions and the other six were excluded with hip and knee scores of 0.44 to 0.59. A flexed squat self-occludes and MoveNet's score falls further there than it does standing, so a floor set from a standing measurement is too strict in the one phase the depth fault is evaluated in.",
+  "confidence_floor": 0.45,
+  "debounce_ms": 0,
+  "min_gap_ms": 2500,
+  "max_cues_per_set": 6,
+  "max_consecutive_same_cue": 2,
+  "same_cue_reset_rationale": "How long a fault must be gone before it is heard about again. max_consecutive_same_cue stops the system repeating itself about one thing the user is already failing to fix; it is not meant to silence a correction for the rest of the session once they have fixed it and let it slip. Without a reset those two are the same thing, and a hold suffers worst because one fault is live for its whole duration, so nothing resets the counter and the exercise goes permanently quiet after two cues. THE VALUE DEPENDS ON THE SHAPE OF THE MOVEMENT. A hold carries a fault continuously, so any clear gap is a real correction and two seconds is enough to tell one from a flicker in the measurement. A counting exercise clears every fault during every standing or top phase by construction, so a short gap is the movement and not a correction: the value has to exceed one repetition or the counter resets on every rep and the limit stops meaning anything. Set above max_rep_ms for the two counting exercises and at two seconds for the plank.",
+  "same_cue_reset_ms": 8000,
+  "priority": [
+   "PU_HIP_SAG",
+   "PU_HIP_PIKE"
+  ],
+  "priority_rationale": "Sag is spoken before pike. Both are deviations of the same body line and only one can be true at a time, so the order matters only in the frames either side of a crossing; sag loads the lumbar spine and takes precedence there.",
+  "silence_is_valid_output": true
+ }
+}

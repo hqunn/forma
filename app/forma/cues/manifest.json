@@ -1,0 +1,76 @@
+{
+    "generated":  "2026-11-22",
+    "voice":  "Microsoft Zira Desktop",
+    "rate":  0,
+    "format":  "22050 Hz, 16-bit PCM, mono",
+    "source":  "docs/specs/*.json",
+    "lead_ms":  8,
+    "tail_ms":  60,
+    "trim_note":  "Leading silence is cut because 4.1 budgets time to audible audio, not to the first sample of a silent file.",
+    "kinds":  "cue: spoken during a set, NFR-P1 is measured through these. guidance: spoken before a set and never during one.",
+    "cues":  [
+                 {
+                     "exercise":  "bodyweight-squat",
+                     "code":  "SQ_DEPTH_INSUFFICIENT",
+                     "lang":  "en",
+                     "kind":  "cue",
+                     "asset":  "cue_squat_depth_en.wav",
+                     "text":  "A little deeper.",
+                     "duration_ms":  918
+                 },
+                 {
+                     "exercise":  "bodyweight-squat",
+                     "code":  "SQ_FORWARD_LEAN",
+                     "lang":  "en",
+                     "kind":  "cue",
+                     "asset":  "cue_squat_chest_en.wav",
+                     "text":  "Chest up.",
+                     "duration_ms":  675
+                 },
+                 {
+                     "exercise":  "guidance",
+                     "code":  "READY",
+                     "lang":  "en",
+                     "kind":  "guidance",
+                     "asset":  "say_ready_en.wav",
+                     "text":  "Set started. Walk back, and begin when you are ready.",
+                     "duration_ms":  3948
+                 },
+                 {
+                     "exercise":  "plank",
+                     "code":  "PL_HIP_SAG",
+                     "lang":  "en",
+                     "kind":  "cue",
+                     "asset":  "cue_plank_hips_up_en.wav",
+                     "text":  "Lift your hips.",
+                     "duration_ms":  976
+                 },
+                 {
+                     "exercise":  "plank",
+                     "code":  "PL_HIP_PIKE",
+                     "lang":  "en",
+                     "kind":  "cue",
+                     "asset":  "cue_plank_hips_down_en.wav",
+                     "text":  "Drop your hips.",
+                     "duration_ms":  1023
+                 },
+                 {
+                     "exercise":  "push-up",
+                     "code":  "PU_HIP_SAG",
+                     "lang":  "en",
+                     "kind":  "cue",
+                     "asset":  "cue_pushup_hips_up_en.wav",
+                     "text":  "Lift your hips.",
+                     "duration_ms":  976
+                 },
+                 {
+                     "exercise":  "push-up",
+                     "code":  "PU_HIP_PIKE",
+                     "lang":  "en",
+                     "kind":  "cue",
+                     "asset":  "cue_pushup_hips_down_en.wav",
+                     "text":  "Drop your hips.",
+                     "duration_ms":  1023
+                 }
+             ]
+}

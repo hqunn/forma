@@ -1,0 +1,41 @@
+{
+  "id": "guidance",
+  "version": "0.1.0",
+  "display_name": "Spoken guidance, shared across exercises",
+  "status": "draft",
+  "notes": [
+    "Chapter 1.3.1 places the user two to four metres from the phone, side on, wearing",
+    "headphones. In that position the user cannot read the screen and, on the target",
+    "device, cannot see it at all: 4.1 points the rear cameras at the user, which",
+    "puts the main display face down the other way. Speech is therefore not an",
+    "enhancement of the interface before a set. It is the interface.",
+    "",
+    "These lines are the ones that do not belong to any one exercise: acknowledgements",
+    "and rejections, which read the same whatever is being trained. The lines that do",
+    "belong to an exercise stay in that exercise's specification, as framing.guidance",
+    "and as each calibration measure's instruction, and name their asset there.",
+    "",
+    "Every line here is spoken before Stage.SET and never during it. From the first",
+    "repetition onward the cue bank owns the audio channel, because NFR-P1 is measured",
+    "through it and a second speaker in that window is a second thing to attend to.",
+    "",
+    "Wording rule: short, and an instruction rather than a status. 'Step back' tells",
+    "the user what to do; 'framing failed' tells them what the software thinks.",
+    "",
+    "One line per transition, never two. SoundPool mixes rather than queues, so a",
+    "spoken acknowledgement followed immediately by the next instruction would be two",
+    "voices at once. There is nothing to acknowledge separately in any case: being",
+    "asked for the next hold is how the user learns the last one was accepted, and a",
+    "rejection line already says that the hold is about to be repeated. Drafts of this",
+    "file carried FRAMED and ACCEPTED lines; both were cut for exactly this reason."
+  ],
+
+  "lines": {
+    "READY": {
+      "en": {
+        "asset": "say_ready_en.wav",
+        "text": "Set started. Walk back, and begin when you are ready."
+      }
+    }
+  }
+}

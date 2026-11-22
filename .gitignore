@@ -1,0 +1,22 @@
+# Build outputs
+build/
+.gradle/
+local.properties
+*.apk
+
+# LaTeX intermediates
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+.live/
+
+# Python
+__pycache__/

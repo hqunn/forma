@@ -1,0 +1,58 @@
+\chapter{Source Code and Reproducibility}
+\label{app:source-code}
+
+The source code for this project is published at:
+
+\begin{center}
+\url{https://github.com/hqunn/forma}
+\end{center}
+
+\noindent That repository holds the client, the assessment library, the
+exercise specifications, the benchmark application with the runs named
+below, the replay harness, and this report with its figures. The recorded
+video is not there. It is video of a person.
+
+Every performance figure in Chapter 4 comes from a named run of one
+instrument. Both are kept, so a number can be recomputed rather than taken.
+
+\textbf{The instrument} is a separate Android application at
+\texttt{app/\allowbreak{}benchmark/}, sharing no source with the client at
+\texttt{app/\allowbreak{}forma/}. It drives the pose engine and nothing else,
+which is why NFR-P1 cannot come from it at any setting (4.2.2). Each run
+writes a directory under
+\texttt{app/\allowbreak{}benchmark/\allowbreak{}results/} holding
+\texttt{summary.csv} and a per-frame file, from which every percentile
+in this report can be recomputed.
+
+\textbf{The runs.} Chapter 4 names a run by the job it does; these are the directories.
+\texttt{sweep-\allowbreak{}20261104-\allowbreak{}204742} is the deciding
+sweep, eight configurations at 60 seconds each, in the order 4.2.3 prints. The four \texttt{single-} runs of 2026-11-04 at 20:11:49, 20:14:36,
+20:16:31 and 20:17:59, three MoveNet and one MediaPipe Lite, are the
+agreement check in 4.2.4, whose four medians are in their per-frame files.
+\texttt{sets/\allowbreak{}set-\allowbreak{}20261104-\allowbreak{}234828.json}
+is the set in 4.2.5 on which the stillness threshold raised nothing.
+\texttt{single-\allowbreak{}lite-\allowbreak{}gpu-\allowbreak{}20260918-\allowbreak{}012614}
+is the cold reading 4.2.3 sets against the same configuration warm.
+\texttt{sweep-\allowbreak{}20260910-\allowbreak{}215904} is the superseded
+sweep, kept as a record and not quoted as a result (4.2.2). And
+\texttt{endurance-\allowbreak{}movenet-\allowbreak{}lightning-\allowbreak{}gpu-\allowbreak{}20261105-\allowbreak{}200718}
+is the ten-minute run on the shipped configuration that 9.4.1 reports, and
+\texttt{endurance-\allowbreak{}lite-\allowbreak{}gpu-\allowbreak{}20260911-\allowbreak{}220256}
+is the same measurement on MediaPipe from before the preparation fix.
+
+\textbf{The model} is committed because it could not be scripted: Google's
+documented URLs return \texttt{403} and the weights now need an authenticated
+Kaggle account. It is the float TFLite export published by Qualcomm AI Hub,
+verified as a valid flatbuffer with the input and output shapes the adapter
+expects, so the report credits Qualcomm and not Google. The
+MediaPipe bundles are fetched by a length-checking script and are not
+committed.
+
+\textbf{One gap, and it is the one that matters.} The platform path from the
+play call to the first audible sample is not instrumented, so NFR-P1 is
+bounded below rather than measured. The endurance run carries a caveat of its
+own, that its framing gate never confirmed a subject, stated in 9.4.1 beside
+the figures it qualifies. Every other caveat sits with the figure it qualifies, in 4.2.3 and
+4.2.5: one device, one subject, one room, a debuggable build, and a sweep
+that ran from 34.1 to a peak of 39.0\,\textdegree C against the winner,
+measured last at 38.5\,\textdegree C and warmer than every MediaPipe row.

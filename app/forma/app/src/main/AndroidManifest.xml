@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+      CAMERA is the only permission this application ships with.
+
+      There is deliberately no INTERNET permission. Chapter 6's deployment
+      view argues that the privacy claim in 1.2 is enforced by the platform
+      rather than asserted in prose: an application without the permission
+      cannot open a socket, whatever its code says, and that is checkable by
+      anyone with the APK in under a minute. Adding INTERNET here would
+      silently withdraw that argument, so it is not a line to add casually
+      when a future feature wants a network call.
+
+      4.4 chose a pre-authored cue bank partly to keep this true. Nothing
+      in the live path needs a network, and the bank ships in the APK.
+    -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera.any" />
+
+    <!--
+      Not declaring INTERNET is not the same as not having it, and on
+      2026-11-04 the first build on hardware had it. The merged manifest
+      carried INTERNET and ACCESS_NETWORK_STATE, both granted, neither
+      written here.
+
+      They arrive with com.google.mediapipe:tasks-vision, through
+      tasks-core, which depends on com.google.android.datatransport. That is
+      Google's Cloud Client Telemetry transport: a library whose purpose is
+      to batch data and upload it. It brought a backend-discovery service, a
+      JobScheduler service and an alarm receiver with it.
+
+      Removing them here is what makes the claim in 1.2 true of the artefact
+      rather than of this file. The manifest merger is the only place it can
+      be done, because the permission is not ours to leave out.
+
+      The library is left on the classpath rather than excluded from the
+      build. Denying it the permission and the components is a platform
+      guarantee; removing classes that tasks-core may construct is a crash
+      waiting for the first session. If MediaPipe ever needs the network to
+      do inference, that is a finding about MediaPipe and belongs in the
+      report, not a reason to restore the line quietly.
+
+      Check after any dependency change, and do not trust this file alone:
+        app/build/intermediates/merged_manifest/debug/*/AndroidManifest.xml
+    -->
+    <uses-permission
+        android:name="android.permission.INTERNET"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.ACCESS_NETWORK_STATE"
+        tools:node="remove" />
+
+    <!--
+      These three are not requested by any dependency. The merger implies
+      them, and its own report says why:
+
+        reason: org.tensorflow.lite.gpu.api has a targetSdkVersion < 4
+
+      A transitive AAR ships a manifest with no modern targetSdkVersion,
+      which trips the compatibility rule that granted pre-Donut applications
+      storage and phone-state access implicitly. Nothing in this application
+      or in that library calls an API they protect, so removing them cannot
+      raise a SecurityException.
+
+      They are removed rather than tolerated because an APK that asks to read
+      phone state is a question the privacy requirements in 3.4.4 should not
+      have to answer, and "a dependency added it" is a poor answer to it.
+      Session records live in application-specific external storage, which
+      has needed no permission since API 19 and this application's minimum is
+      26, so the two storage entries buy nothing either.
+    -->
+    <uses-permission
+        android:name="android.permission.READ_PHONE_STATE"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        tools:node="remove" />
+
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="FORMA"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Forma">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:theme="@style/Theme.Forma">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          The upload machinery that came with the telemetry transport. With
+          no INTERNET permission these could not reach anything, but a
+          scheduler that wakes the device to retry an upload it can never
+          complete is still work this application did not ask for.
+        -->
+        <service
+            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+            tools:node="remove" />
+        <service
+            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+            tools:node="remove" />
+        <receiver
+            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+            tools:node="remove" />
+    </application>
+</manifest>

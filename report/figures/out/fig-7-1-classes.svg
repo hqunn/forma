@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 870" width="1180" height="870">
+  <style>
+  text { font-family: Segoe UI, Calibri, Helvetica Neue, Arial, sans-serif; fill: #16323D; }
+  .t    { font-size: 15px; }
+  .tb   { font-size: 15px; font-weight: 600; }
+  .s    { font-size: 12.5px; fill: #4A646F; }
+  .sb   { font-size: 12.5px; font-weight: 600; fill: #4A646F; }
+  .e    { font-size: 12.5px; fill: #4A646F; }
+  .h    { font-size: 16px; font-weight: 600; }
+  .m    { font-family: Consolas, DejaVu Sans Mono, Courier New, monospace; font-size: 12.5px; }
+  .mb   { font-family: Consolas, DejaVu Sans Mono, Courier New, monospace; font-size: 12.5px; font-weight: 600; }
+  .cap  { font-size: 12.5px; fill: #4A646F; font-style: italic; }
+  .box  { fill: #F2F7F9;  stroke: #16323D;    stroke-width: 1.4; }
+  .boxw { fill: #FDF0EB;  stroke: #E8663C;  stroke-width: 1.4; }
+  .boxp { fill: #FFFFFF; stroke: #16323D;    stroke-width: 1.4; }
+  .boxq { fill: #FFFFFF; stroke: #C7D6DC;   stroke-width: 1.4; }
+  .boxd { fill: none;    stroke: #4A646F;  stroke-width: 1.2; stroke-dasharray: 5 4; }
+  .boxk { fill: #16323D;   stroke: #16323D;    stroke-width: 1.4; }
+  .reg  { fill: none;    stroke: #C7D6DC;   stroke-width: 1.2; }
+  .ln   { stroke: #16323D;   stroke-width: 1.4; fill: none; }
+  .lnm  { stroke: #4A646F; stroke-width: 1.2; fill: none; }
+  .lnh  { stroke: #C7D6DC;  stroke-width: 1.2; fill: none; }
+  .lna  { stroke: #E8663C; stroke-width: 1.6; fill: none; }
+  .lnd  { stroke: #4A646F; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+  .life { stroke: #C7D6DC;  stroke-width: 1.2; stroke-dasharray: 4 4; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9.2" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0.8 L10,5 L0,9.2 z" fill="#16323D"/></marker>
+    <marker id="am" viewBox="0 0 10 10" refX="9.2" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0.8 L10,5 L0,9.2 z" fill="#4A646F"/></marker>
+    <marker id="aa" viewBox="0 0 10 10" refX="9.2" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0.8 L10,5 L0,9.2 z" fill="#E8663C"/></marker>
+    <marker id="ao" viewBox="0 0 10 10" refX="9.6" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0.5,0.8 L10,5 L0.5,9.2" fill="none" stroke="#4A646F" stroke-width="1.5"/></marker>
+    <marker id="tri" viewBox="0 0 10 10" refX="9.6" refY="5" markerWidth="11" markerHeight="11" orient="auto-start-reverse"><path d="M0.5,0.6 L10,5 L0.5,9.4 z" fill="#FFFFFF" stroke="#16323D" stroke-width="1.2"/></marker>
+  </defs>
+  <rect x="0" y="0" width="1180" height="870" fill="#FFFFFF"/>
+  <rect x="36" y="56" width="600" height="776" rx="8" class="reg"/>
+  <text x="60" y="84" class="h" text-anchor="start">assessment</text>
+  <text x="60" y="104" class="s" text-anchor="start">Kotlin JVM. No Android type is reachable from here.</text>
+  <rect x="668" y="56" width="476" height="776" rx="8" class="reg"/>
+  <text x="692" y="84" class="h" text-anchor="start">app</text>
+  <text x="692" y="104" class="s" text-anchor="start">Android. Converts, sequences and times. Judges nothing.</text>
+  <line x1="487.0" y1="266" x2="487.0" y2="300" class="ln" marker-end="url(#a)"/>
+  <line x1="487.0" y1="394" x2="487.0" y2="420" class="ln" marker-end="url(#a)"/>
+  <line x1="487.0" y1="514" x2="487.0" y2="540" class="ln" marker-end="url(#a)"/>
+  <line x1="322" y1="180" x2="356" y2="180" class="lnd" marker-end="url(#a)"/>
+  <line x1="322" y1="346" x2="356" y2="346" class="lnd" marker-end="url(#a)"/>
+  <line x1="322" y1="482" x2="356" y2="482" class="lnd" marker-end="url(#a)"/>
+  <line x1="191.0" y1="620" x2="191.0" y2="584" class="lnd" marker-end="url(#a)"/>
+  <line x1="823.0" y1="266" x2="823.0" y2="316" class="ln" marker-end="url(#a)"/>
+  <line x1="823.0" y1="410" x2="823.0" y2="436" class="ln" marker-end="url(#a)"/>
+  <line x1="823.0" y1="548" x2="823.0" y2="596" class="ln" marker-end="url(#a)"/>
+  <line x1="823.0" y1="690" x2="823.0" y2="716" class="ln" marker-end="url(#a)"/>
+  <line x1="692" y1="180" x2="618" y2="180" class="lnd" marker-end="url(#a)"/>
+  <text x="652" y="170" class="s" text-anchor="middle">uses</text>
+  <line x1="487.0" y1="266" x2="487.0" y2="690" class="lnd" marker-end="url(#a)"/>
+  <rect x="60" y="132" width="262" height="152" class="boxp"/>
+  <text x="191.0" y="152" class="s" text-anchor="middle">«data»</text>
+  <text x="191.0" y="174" class="tb" text-anchor="middle">ExerciseSpec</text>
+  <line x1="60" y1="184" x2="322" y2="184" stroke="#16323D" stroke-width="1.2"/>
+  <text x="72" y="208" class="m" text-anchor="start">landmarks, phases</text>
+  <text x="72" y="228" class="m" text-anchor="start">repDriver, smoothing</text>
+  <text x="72" y="248" class="m" text-anchor="start">faults, cues, trigger</text>
+  <text x="72" y="268" class="m" text-anchor="start">framing, excludedFaults</text>
+  <rect x="60" y="316" width="262" height="112" class="boxp"/>
+  <text x="191.0" y="336" class="s" text-anchor="middle">«object»</text>
+  <text x="191.0" y="358" class="tb" text-anchor="middle">SpecLoader</text>
+  <line x1="60" y1="368" x2="322" y2="368" stroke="#16323D" stroke-width="1.2"/>
+  <text x="72" y="392" class="m" text-anchor="start">load(text): ExerciseSpec</text>
+  <text x="72" y="412" class="m" text-anchor="start">11 validation rules</text>
+  <rect x="60" y="452" width="262" height="132" class="boxp"/>
+  <text x="191.0" y="472" class="s" text-anchor="middle">«object»</text>
+  <text x="191.0" y="494" class="tb" text-anchor="middle">Measurements</text>
+  <line x1="60" y1="504" x2="322" y2="504" stroke="#16323D" stroke-width="1.2"/>
+  <text x="72" y="528" class="m" text-anchor="start">evaluate(m, frame): Double?</text>
+  <text x="72" y="548" class="m" text-anchor="start">explain(m, frame)</text>
+  <text x="72" y="568" class="m" text-anchor="start">eight functions</text>
+  <rect x="60" y="620" width="262" height="112" class="boxp"/>
+  <text x="191.0" y="640" class="s" text-anchor="middle">«object»</text>
+  <text x="191.0" y="662" class="tb" text-anchor="middle">Landmarks</text>
+  <line x1="60" y1="672" x2="322" y2="672" stroke="#16323D" stroke-width="1.2"/>
+  <text x="72" y="696" class="m" text-anchor="start">indexOf(name): Int</text>
+  <text x="72" y="716" class="m" text-anchor="start">mirror(name): String</text>
+  <rect x="356" y="132" width="262" height="134" class="boxp"/>
+  <text x="487.0" y="155" class="tb" text-anchor="middle">AssessmentSession</text>
+  <line x1="356" y1="166" x2="618" y2="166" stroke="#16323D" stroke-width="1.2"/>
+  <text x="368" y="190" class="m" text-anchor="start">onFrame(frame): SessionUpdate</text>
+  <text x="368" y="210" class="m" text-anchor="start">framingSatisfied(frame)</text>
+  <text x="368" y="230" class="m" text-anchor="start">startNewSet()</text>
+  <text x="368" y="250" class="m" text-anchor="start">faultLog</text>
+  <rect x="356" y="300" width="262" height="94" class="boxp"/>
+  <text x="487.0" y="323" class="tb" text-anchor="middle">Segmenter</text>
+  <line x1="356" y1="334" x2="618" y2="334" stroke="#16323D" stroke-width="1.2"/>
+  <text x="368" y="358" class="m" text-anchor="start">onFrame(value, t)</text>
+  <text x="368" y="378" class="m" text-anchor="start">: SegmentUpdate</text>
+  <rect x="356" y="420" width="262" height="94" class="boxp"/>
+  <text x="487.0" y="443" class="tb" text-anchor="middle">FaultEvaluator</text>
+  <line x1="356" y1="454" x2="618" y2="454" stroke="#16323D" stroke-width="1.2"/>
+  <text x="368" y="478" class="m" text-anchor="start">onFrame(frame, phase)</text>
+  <text x="368" y="498" class="m" text-anchor="start">: List&lt;RaisedFault&gt;</text>
+  <rect x="356" y="540" width="262" height="114" class="boxp"/>
+  <text x="487.0" y="563" class="tb" text-anchor="middle">TriggerPolicy</text>
+  <line x1="356" y1="574" x2="618" y2="574" stroke="#16323D" stroke-width="1.2"/>
+  <text x="368" y="598" class="m" text-anchor="start">select(raised, now, conf)</text>
+  <text x="368" y="618" class="m" text-anchor="start">: SpokenCue?</text>
+  <text x="368" y="638" class="m" text-anchor="start">suppressed</text>
+  <rect x="356" y="690" width="262" height="112" class="boxp"/>
+  <text x="487.0" y="710" class="s" text-anchor="middle">«data»</text>
+  <text x="487.0" y="732" class="tb" text-anchor="middle">RepOutcome</text>
+  <line x1="356" y1="742" x2="618" y2="742" stroke="#16323D" stroke-width="1.2"/>
+  <text x="368" y="766" class="m" text-anchor="start">rep, extremes</text>
+  <text x="368" y="786" class="m" text-anchor="start">raised: Set&lt;String&gt;</text>
+  <rect x="692" y="132" width="262" height="134" class="boxp"/>
+  <text x="823.0" y="155" class="tb" text-anchor="middle">SessionViewModel</text>
+  <line x1="692" y1="166" x2="954" y2="166" stroke="#16323D" stroke-width="1.2"/>
+  <text x="704" y="190" class="m" text-anchor="start">begin(context, spec)</text>
+  <text x="704" y="210" class="m" text-anchor="start">onFrame(bitmap, rotation)</text>
+  <text x="704" y="230" class="m" text-anchor="start">startSet() / endSet()</text>
+  <text x="704" y="250" class="m" text-anchor="start">state: AppState</text>
+  <rect x="692" y="316" width="262" height="94" class="boxp"/>
+  <text x="823.0" y="339" class="tb" text-anchor="middle">PoseEngine</text>
+  <line x1="692" y1="350" x2="954" y2="350" stroke="#16323D" stroke-width="1.2"/>
+  <text x="704" y="374" class="m" text-anchor="start">submit(bitmap, t, rotation)</text>
+  <text x="704" y="394" class="m" text-anchor="start">close()</text>
+  <rect x="692" y="436" width="262" height="112" class="boxp"/>
+  <text x="823.0" y="456" class="s" text-anchor="middle">«object»</text>
+  <text x="823.0" y="478" class="tb" text-anchor="middle">FrameAdapter</text>
+  <line x1="692" y1="488" x2="954" y2="488" stroke="#16323D" stroke-width="1.2"/>
+  <text x="704" y="512" class="m" text-anchor="start">fromReadings(...): Frame</text>
+  <text x="704" y="532" class="m" text-anchor="start">letterbox(), unpad()</text>
+  <rect x="692" y="596" width="262" height="94" class="boxp"/>
+  <text x="823.0" y="619" class="tb" text-anchor="middle">CuePlayer</text>
+  <line x1="692" y1="630" x2="954" y2="630" stroke="#16323D" stroke-width="1.2"/>
+  <text x="704" y="654" class="m" text-anchor="start">preload(assets)</text>
+  <text x="704" y="674" class="m" text-anchor="start">play(asset): Long?</text>
+  <rect x="692" y="716" width="262" height="94" class="boxp"/>
+  <text x="823.0" y="739" class="tb" text-anchor="middle">Narrator, StageTones</text>
+  <line x1="692" y1="750" x2="954" y2="750" stroke="#16323D" stroke-width="1.2"/>
+  <text x="704" y="774" class="m" text-anchor="start">say(asset): Boolean</text>
+  <text x="704" y="794" class="m" text-anchor="start">framed(), ready(), ...</text>
+  <text x="590" y="856" class="cap" text-anchor="middle">Solid: what one frame does, in the order drawn.  Dashed: uses.  Both edges crossing the module boundary point left, and the build makes the reverse impossible.</text>
+
+</svg>

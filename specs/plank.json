@@ -1,0 +1,152 @@
+{
+  "id": "plank",
+  "version": "0.3.0",
+  "display_name": "Front plank",
+  "status": "draft",
+  "notes": [
+    "Coordinate convention: normalised image coordinates. y increases downward.",
+    "This is the exercise 4.6 named as the stress case for the format: it is a",
+    "hold, not a repetition. Two things in this file are where the format bent.",
+    "First, rep_driver does not segment repetitions here; it segments bouts of being",
+    "in position at all, and reports elapsed time rather than a count. Second, there",
+    "is no calibration block, because both faults are absolute. The second of those",
+    "is the format behaving as designed. The first required an evaluator feature,",
+    "and that cost is reported rather than absorbed. See 4.6.1 of the report.",
+    "Every threshold here is provisional. None was derived from recorded clips.",
+    "v0.2.0 (2026-10-31): both faults now carry a taxonomy source. No equivalent of the",
+    "FMS exists for the front plank; what does exist, consistently, is the termination",
+    "criterion of the plank endurance test, and the two failure modes it names are",
+    "exactly the two faults declared here. See docs/specs/SOURCES.md."
+  ],
+
+  "excluded_faults": [
+    {
+      "code": "PL_HEAD_DROP",
+      "description": "Neck out of line with the spine, head hanging or craned up.",
+      "reason": "Observable in this framing, and excluded for a different reason from the squat and push-up cases: no source. The neck position is coached widely but this project has found no expert-annotated taxonomy that defines it as a fault with a criterion, and G5 forbids inventing one. Adding it would mean choosing a head angle out of nothing and calling it a standard.",
+      "why_not_change_the_framing": "Not a framing problem.",
+      "status": "excluded_from_mvp",
+      "revisit_when": "A source defines it. This is the cleanest example in the project of a fault left out because the evidence is missing rather than because the geometry is.",
+      "decided": "2026-10-31"
+    }
+  ],
+
+  "landmarks": [
+    "LEFT_SHOULDER", "RIGHT_SHOULDER",
+    "LEFT_ELBOW", "RIGHT_ELBOW",
+    "LEFT_HIP", "RIGHT_HIP",
+    "LEFT_KNEE", "RIGHT_KNEE",
+    "LEFT_ANKLE", "RIGHT_ANKLE"
+  ],
+
+  "framing": {
+    "view": "sagittal",
+    "distance_m": [2.0, 4.0],
+    "camera_height_m": [0.2, 0.8],
+    "min_visibility": 0.45,
+    "required_visible": [
+      "LEFT_SHOULDER", "LEFT_HIP", "LEFT_ANKLE"
+    ],
+    "reminders": [
+      "Please keep your whole body in frame, feet included",
+      "Please set up side on to the camera, not facing it",
+      "Please keep the phone low, near floor height"
+    ],
+    "guidance": "Press start, then get down side on to the camera, far enough back to fit."
+  },
+
+  "rep_driver": {
+    "signal": { "fn": "angle_from_vertical", "args": ["LEFT_SHOULDER", "LEFT_HIP"], "aggregate": "mean_of_sides" },
+    "signal_rationale": "Not a measure of quality, only of whether the user is in position at all. The shoulder-to-hip segment reads near 90 degrees from vertical when horizontal and near 0 when standing, so the same block that segments repetitions elsewhere segments presence here.",
+    "reports": { "type": "duration", "phase": "holding" },
+    "direction": "increasing_is_entry",
+    "smoothing": { "type": "median", "window_frames": 5 },
+    "hysteresis": {
+      "descent_enter": { "type": "absolute", "value": 65.0 },
+      "ascent_exit": { "type": "absolute", "value": 50.0 }
+    },
+    "min_rep_ms": 3000,
+    "max_rep_ms": 600000
+  },
+
+  "phases": [
+    { "name": "out", "entered_when": "driver < ascent_exit" },
+    { "name": "holding", "entered_when": "driver >= descent_enter" }
+  ],
+
+  "faults": [
+    {
+      "code": "PL_HIP_SAG",
+      "description": "The hips dropped below the line from the shoulders to the ankles.",
+      "coaching": {
+        "fix": "Tuck your hips under slightly, squeeze your glutes and pull your elbows back towards your toes. If the hips keep sinking, end the hold: a short plank held well is worth more than a long one that sags."
+      },
+      "phases": ["holding"],
+      "measure": {
+        "fn": "signed_offset_from_line",
+        "args": ["LEFT_HIP", "LEFT_SHOULDER", "LEFT_ANKLE"],
+        "normalise_by": "shoulder_ankle_length",
+        "aggregate": "mean_of_sides"
+      },
+      "operator": "gt",
+      "threshold": { "type": "absolute", "value": 0.02 },
+      "min_frames": 30,
+      "provenance": {
+        "status": "taxonomy_confirmed",
+        "plain_source": "Plank endurance testing, where the hold is called over the moment the body stops being a straight line.",
+        "taxonomy_source": "Plank endurance test termination criterion, consistent across protocols: the hold ends on loss of neutral alignment, and the two named failure modes are the hips lowering and the pelvis rising. Primary: 'The Core of the Issue: Plank Performance and Pain in the Lower Back', J Clin Med 2025;14(11):3926, doi 10.3390/jcm14113926, which ends the hold on loss of neutral alignment 'such as excessive lumbar extension or a pelvic drop'. Corroborating: ADULT-FIT front plank criterion validity study, Appl Sci 2025;15(5):2722. Weaker than the FMS: these are test-termination rules rather than a taxonomy annotated by trainers for coaching, and no single authority defines them.",
+        "threshold_source": null,
+        "note": "Identical measurement, operator and threshold to PU_HIP_SAG. That is a result worth keeping rather than a duplication to factor out: two different exercises reached the same constraint independently, which is the first evidence in this project that the measurement vocabulary is converging rather than growing one function per exercise. Absolute rather than calibrated, for the reason given in the push-up file: a straight line is proportion free. min_frames is higher here because a plank is a hold, and a momentary dip in a ten-frame window is noise while the same dip during a push-up repetition is most of the repetition. Threshold provisional: the only quantified figure located anywhere in the plank literature is a pelvis displacement of 5 cm or more, from one trial protocol (Slovenian Armed Forces injury prevention study, NCT03415464), which is a single protocol rather than a standard and is an absolute distance rather than a body-normalised one. Band reset on 2026-11-05 from replay of data/replay/20261105_020719.mp4, a 44.6 second hold of which the first half was deliberately sagged and the second held straight. Straight: median -0.0295, sd 0.0065, range -0.0463 to -0.0137 over 470 frames. Sagged: median +0.0813, sd 0.0041, range +0.0730 to +0.0962 over 421 frames. The two do not overlap: there is clear air from -0.0137 to +0.0730, and any edge inside it separates them completely. This one sits 7.7 standard deviations above the straight hold and 13 below the sagged one. It raises on every sagged frame and no straight frame, as the previous 0.06 also did; what changes is the margin and the symmetry. One subject, one session, with the fault performed on purpose. To be confirmed or replaced by the certified trainers who review the fault set. NEUTRAL IS NOT ZERO, 2026-11-05. Replaying a recorded set through the shipped engine, a body the performer held straight measured -0.030 in the plank and -0.010 in the push-up, not 0. A band written symmetrically about zero is therefore asymmetric in use: at plus and minus 0.06 the sag edge sat 0.090 above this performer's neutral while the pike edge sat 0.030 below it, so pike was three times the more sensitive of the two and fired on good form. The edges below are placed against the measured neutral instead."
+      }
+    },
+    {
+      "code": "PL_HIP_PIKE",
+      "description": "The hips rose above the line from the shoulders to the ankles.",
+      "coaching": {
+        "fix": "Let the hips come down until your back is flat, and push the floor away through your forearms instead of lifting your seat."
+      },
+      "phases": ["holding"],
+      "measure": {
+        "fn": "signed_offset_from_line",
+        "args": ["LEFT_HIP", "LEFT_SHOULDER", "LEFT_ANKLE"],
+        "normalise_by": "shoulder_ankle_length",
+        "aggregate": "mean_of_sides"
+      },
+      "operator": "lt",
+      "threshold": { "type": "absolute", "value": -0.08 },
+      "min_frames": 30,
+      "provenance": {
+        "status": "taxonomy_confirmed",
+        "plain_source": "Plank endurance testing, where the hold is called over the moment the body stops being a straight line.",
+        "taxonomy_source": "Plank endurance test termination criterion, consistent across protocols: the hold ends on loss of neutral alignment, and the two named failure modes are the hips lowering and the pelvis rising. Primary: 'The Core of the Issue: Plank Performance and Pain in the Lower Back', J Clin Med 2025;14(11):3926, doi 10.3390/jcm14113926, which ends the hold on loss of neutral alignment 'such as excessive lumbar extension or a pelvic drop'. Corroborating: ADULT-FIT front plank criterion validity study, Appl Sci 2025;15(5):2722. Weaker than the FMS: these are test-termination rules rather than a taxonomy annotated by trainers for coaching, and no single authority defines them.",
+        "threshold_source": null,
+        "note": "Unlike PU_HIP_PIKE, this fault is named directly by its source rather than inferred from symmetry: the plank termination criterion names the pelvis rising alongside the hips lowering, as two separate failure modes of the same hold. Piking is the commonest way a tiring plank is made easier, so this fault and PL_HIP_SAG together are most of what the criterion watches. Threshold provisional. Band reset on 2026-11-05 from replay of data/replay/20261105_020719.mp4, a 44.6 second hold of which the first half was deliberately sagged and the second held straight. Straight: median -0.0295, sd 0.0065, range -0.0463 to -0.0137 over 470 frames. Sagged: median +0.0813, sd 0.0041, range +0.0730 to +0.0962 over 421 frames. The two do not overlap: there is clear air from -0.0137 to +0.0730, and any edge inside it separates them completely. This one sits 7.7 standard deviations above the straight hold and 13 below the sagged one. It raises on every sagged frame and no straight frame, as the previous 0.06 also did; what changes is the margin and the symmetry. One subject, one session, with the fault performed on purpose. To be confirmed or replaced by the certified trainers who review the fault set. NEUTRAL IS NOT ZERO, 2026-11-05. Replaying a recorded set through the shipped engine, a body the performer held straight measured -0.030 in the plank and -0.010 in the push-up, not 0. A band written symmetrically about zero is therefore asymmetric in use: at plus and minus 0.06 the sag edge sat 0.090 above this performer's neutral while the pike edge sat 0.030 below it, so pike was three times the more sensitive of the two and fired on good form. The edges below are placed against the measured neutral instead."
+      }
+    }
+  ],
+
+  "cues": {
+    "PL_HIP_SAG":  { "en": { "asset": "cue_plank_hips_up_en.wav",   "text": "Lift your hips." } },
+    "PL_HIP_PIKE": { "en": { "asset": "cue_plank_hips_down_en.wav", "text": "Drop your hips." } }
+  },
+
+  "trigger": {
+    "confidence_floor_rationale": "Lowered from 0.6 to 0.45 on 2026-11-04, with the engine change. The two numbers are not the same quantity: BlazePose reported a visibility and MoveNet reports a keypoint heatmap score. Measured on the same standing pose that night, run sweep-20261104-204742 against single-lite-gpu-20261104-201759, the knee scored a median of 0.761 under MoveNet and 0.986 under BlazePose. The floor is the old one scaled by that ratio, 0.6 x 0.761 / 0.986 = 0.46, rounded down. It is provisional and derived from no source, exactly like every other number in this file. What forced it: on set-20261104-232535, ten deliberately shallow squats raised the depth fault on four repetitions and the other six were excluded with hip and knee scores of 0.44 to 0.59. A flexed squat self-occludes and MoveNet's score falls further there than it does standing, so a floor set from a standing measurement is too strict in the one phase the depth fault is evaluated in.",
+    "confidence_floor": 0.45,
+    "min_frames_rationale": "Raised from 10 to 30 on 2026-11-05, and debounce_ms dropped to 0 with it. The two were doing the same job in different units and the millisecond one was the whole of the latency: on set-20261105-150349 the cue path measured 2557 ms and 2515 ms from confirmation to audio, of which 2542 and 2500 were the policy waiting out the debounce and 15 was the dispatch. The trainee hears that as lag. The window now carries the guard alone, in frames, which is the unit the confirmation is counted in. Thirty frames is one second at the rate this device sustains. The number comes from the recordings rather than from preference: across the clean plank clip the sag measurement drifts past its edge for a longest unbroken run of 22 frames, while the deliberate faults run 267 and 277, so a window of 30 rejects the drift with eight frames to spare and fires on a real fault in a third of the time the debounce took. WHY ONE SECOND IS ACCEPTABLE HERE AND WOULD NOT BE IN A SQUAT. 3.4.1 derives the 300 ms response budget from a repetition's descent, where a late cue describes a repetition that is already over. A hold has no repetition to miss: the fault is a sustained postural drift that persists for tens of seconds, so a second spent making sure costs the trainee nothing and buys the certainty that a wobble is not cued.",
+    "debounce_ms": 0,
+    "min_gap_ms": 2000,
+    "pacing_rationale": "A hold corrects differently from a repetition, and the policy now says so. In a squat or a push-up the movement supplies its own pacing: the fault clears at the top of every repetition, the trainee gets a natural moment to act, and a budget of six with a limit of two in a row keeps the set from becoming a lecture. A plank supplies none of that. The position is held, the fault persists until the trainee changes something, and there is no repetition boundary to pace against. So the plank is told to keep correcting. One second of confirmation, then a cue, then a two second cooldown, then another cue if the fault is still there, for as long as it is still there. The ceilings are null rather than a large number, because the intent is no ceiling rather than a generous one. WHAT THIS COSTS, STATED PLAINLY. A trainee who sags for a full forty-five second hold and never corrects will hear the cue roughly twenty times. That is the intended behaviour and it is also the most likely thing in this file to be wrong about a real person: NFR-U4 caps a set at six cues precisely because a system that speaks continuously is experienced as criticism. The requirement is amended rather than quietly broken, and whether twenty is coaching or nagging is a question for the trainee and the trainers, not for this file.",
+    "max_cues_per_set": null,
+    "max_consecutive_same_cue": null,
+    "same_cue_reset_rationale": "How long a fault must be gone before it is heard about again. max_consecutive_same_cue stops the system repeating itself about one thing the user is already failing to fix; it is not meant to silence a correction for the rest of the session once they have fixed it and let it slip. Without a reset those two are the same thing, and a hold suffers worst because one fault is live for its whole duration, so nothing resets the counter and the exercise goes permanently quiet after two cues. THE VALUE DEPENDS ON THE SHAPE OF THE MOVEMENT. A hold carries a fault continuously, so any clear gap is a real correction and two seconds is enough to tell one from a flicker in the measurement. A counting exercise clears every fault during every standing or top phase by construction, so a short gap is the movement and not a correction: the value has to exceed one repetition or the counter resets on every rep and the limit stops meaning anything. Set above max_rep_ms for the two counting exercises and at two seconds for the plank.",
+    "same_cue_reset_ms": 2000,
+    "priority": [
+      "PL_HIP_SAG",
+      "PL_HIP_PIKE"
+    ],
+    "priority_rationale": "Sag loads the lumbar spine; piking only makes the hold easier. Safety before effort.",
+    "trigger_note": "Every interval here is longer than the squat and push-up equivalents. A plank has no repetitions to hide a cue between, so a user holding for sixty seconds is a captive audience, and the trigger policy is the only thing standing between them and being talked at continuously. 7.6 carries the argument.",
+    "silence_is_valid_output": true
+  }
+}

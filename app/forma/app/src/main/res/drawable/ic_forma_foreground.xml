@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The FORMA mark, redrawn from the design file rather than exported as a
+  bitmap, so it stays sharp at every launcher size and carries the brand
+  colours as values rather than as pixels.
+
+  The mark is a chevron with a keypoint on each of its three vertices, which
+  is what the product does: it reads a body as points and judges the angles
+  between them. Geometry taken from `Brand / Mark`, a 120 unit group; the
+  group transform below places it inside the 72dp safe zone of a 108dp
+  adaptive icon.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <group
+        android:translateX="18"
+        android:translateY="18"
+        android:scaleX="0.6"
+        android:scaleY="0.6">
+
+        <!-- The chevron. brand/teal, 12 units, round cap and join. -->
+        <path
+            android:pathData="M34,22 L86,60 L34,98"
+            android:strokeColor="#2E7D8F"
+            android:strokeWidth="12"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+
+        <!-- The angle at the vertex: angle(HIP, KNEE, ANKLE), the
+             signal that decides a squat. Radius 28, so it clears
+             both limbs; swept wider it lands underneath them. -->
+        <path
+            android:pathData="M59.37,51.35 C57.54,56.97 57.54,63.03 59.37,68.65"
+            android:strokeColor="#E8663C"
+            android:strokeWidth="4"
+            android:strokeLineCap="round" />
+
+        <!-- A keypoint on each vertex. -->
+        <path
+            android:pathData="M34,17.8 A4.2,4.2 0 1,1 33.99,17.8 Z"
+            android:fillColor="#FFFFFF" />
+        <path
+            android:pathData="M86,55.8 A4.2,4.2 0 1,1 85.99,55.8 Z"
+            android:fillColor="#FFFFFF" />
+        <path
+            android:pathData="M34,93.8 A4.2,4.2 0 1,1 33.99,93.8 Z"
+            android:fillColor="#FFFFFF" />
+    </group>
+</vector>

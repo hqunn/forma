@@ -1,0 +1,2 @@
+config,available,note,frames,duration_s,fps,prep_p50_ms,infer_p50_ms,infer_p95_ms,total_p50_ms,total_p95_ms,pose_rate,heel_detect_rate,heel_jitter_norm,thermal_max,battery_start_c,battery_end_c
+lite-gpu,1,"",1794,60.10,29.85,7,45,51,52,60,1.00,1.00,0.00240,0,29.1,31.6

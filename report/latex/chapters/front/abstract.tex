@@ -1,0 +1,42 @@
+\begin{preface}{Abstract}
+  Most people who train do so without anyone watching them, and the faults
+  that matter are the ones they cannot see themselves committing. A correction
+  is only useful while the repetition is still happening, which gives a system
+  about three hundred milliseconds from a fault appearing to the trainee
+  hearing about it. No surveyed product delivers spoken coaching inside that
+  window, publishes how its accuracy was evaluated, or states how a new
+  exercise is added.
+
+  FORMA is a mobile system that observes a trainee through the phone's camera
+  and speaks a corrective cue during the set. This first phase delivers the
+  perception and assessment path for three exercises: the bodyweight squat,
+  the push-up and the front plank. Pose estimation runs entirely on the
+  handset, movement assessment is geometric constraints declared per exercise
+  rather than a learned classifier, and feedback is a pre-authored spoken cue
+  selected by a discrete fault code with no language model in the live path.
+  An exercise is added by authoring one specification file, which a single
+  generic evaluator executes.
+
+  The pose engine was chosen by measuring eight configurations of two engines
+  on the target handset. The chosen configuration sustains 29.57 frames per
+  second with a 95th-percentile per-frame latency of 27 milliseconds, against
+  requirements of 22 frames per second and 65 milliseconds. Across ten
+  recorded sets totalling 9,893 frames the engine returned a pose on every
+  frame. Repetition counting was exact on all seven counting sets. Six
+  technique faults were evaluated against the recordings. Precision was 0.990
+  on the five faults judged frame by frame, no individual fault fell below
+  0.957 against a requirement of 0.90, and every scripted condition was
+  detected.
+
+  Five of the six faults carry a criterion cited to published work; no
+  threshold carries a source, and the specification format records that gap in
+  its own fields rather than concealing it. The evaluation rests on one
+  subject in one session, and an independent labelling pass by a certified
+  trainer is agreed and outstanding. Both are stated as the boundary of the
+  claim rather than left to be inferred.
+
+  \vspace{1em}
+  \noindent\textbf{Keywords:} on-device pose estimation, movement
+  assessment, exercise technique feedback, declarative rule specification,
+  mobile computer vision.
+\end{preface}

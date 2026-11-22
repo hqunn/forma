@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1380 760" width="1380" height="760">
+  <style>
+  text { font-family: Segoe UI, Calibri, Helvetica Neue, Arial, sans-serif; fill: #16323D; }
+  .t    { font-size: 15px; }
+  .tb   { font-size: 15px; font-weight: 600; }
+  .s    { font-size: 12.5px; fill: #4A646F; }
+  .sb   { font-size: 12.5px; font-weight: 600; fill: #4A646F; }
+  .e    { font-size: 12.5px; fill: #4A646F; }
+  .h    { font-size: 16px; font-weight: 600; }
+  .m    { font-family: Consolas, DejaVu Sans Mono, Courier New, monospace; font-size: 12.5px; }
+  .mb   { font-family: Consolas, DejaVu Sans Mono, Courier New, monospace; font-size: 12.5px; font-weight: 600; }
+  .cap  { font-size: 12.5px; fill: #4A646F; font-style: italic; }
+  .box  { fill: #F2F7F9;  stroke: #16323D;    stroke-width: 1.4; }
+  .boxw { fill: #FDF0EB;  stroke: #E8663C;  stroke-width: 1.4; }
+  .boxp { fill: #FFFFFF; stroke: #16323D;    stroke-width: 1.4; }
+  .boxq { fill: #FFFFFF; stroke: #C7D6DC;   stroke-width: 1.4; }
+  .boxd { fill: none;    stroke: #4A646F;  stroke-width: 1.2; stroke-dasharray: 5 4; }
+  .boxk { fill: #16323D;   stroke: #16323D;    stroke-width: 1.4; }
+  .reg  { fill: none;    stroke: #C7D6DC;   stroke-width: 1.2; }
+  .ln   { stroke: #16323D;   stroke-width: 1.4; fill: none; }
+  .lnm  { stroke: #4A646F; stroke-width: 1.2; fill: none; }
+  .lnh  { stroke: #C7D6DC;  stroke-width: 1.2; fill: none; }
+  .lna  { stroke: #E8663C; stroke-width: 1.6; fill: none; }
+  .lnd  { stroke: #4A646F; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; }
+  .life { stroke: #C7D6DC;  stroke-width: 1.2; stroke-dasharray: 4 4; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9.2" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0.8 L10,5 L0,9.2 z" fill="#16323D"/></marker>
+    <marker id="am" viewBox="0 0 10 10" refX="9.2" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0.8 L10,5 L0,9.2 z" fill="#4A646F"/></marker>
+    <marker id="aa" viewBox="0 0 10 10" refX="9.2" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0.8 L10,5 L0,9.2 z" fill="#E8663C"/></marker>
+    <marker id="ao" viewBox="0 0 10 10" refX="9.6" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0.5,0.8 L10,5 L0.5,9.2" fill="none" stroke="#4A646F" stroke-width="1.5"/></marker>
+    <marker id="tri" viewBox="0 0 10 10" refX="9.6" refY="5" markerWidth="11" markerHeight="11" orient="auto-start-reverse"><path d="M0.5,0.6 L10,5 L0.5,9.4 z" fill="#FFFFFF" stroke="#16323D" stroke-width="1.2"/></marker>
+  </defs>
+  <rect x="0" y="0" width="1380" height="760" fill="#FFFFFF"/>
+  <rect x="36" y="56" width="664" height="624" rx="8" class="reg"/>
+  <text x="60" y="84" class="h" text-anchor="start">A repetition: the driver falls to enter</text>
+  <text x="60" y="104" class="s" text-anchor="start">Squat, push-up</text>
+  <circle cx="160" cy="146" r="11" fill="#16323D"/>
+  <rect x="60" y="184" width="200" height="52" rx="4" class="boxp"/>
+  <text x="160.0" y="207.0" class="tb" text-anchor="middle">Not engaged</text>
+  <text x="160.0" y="225.0" class="s" text-anchor="middle">phase: idle</text>
+  <line x1="160" y1="157" x2="160" y2="184" class="ln" marker-end="url(#a)"/>
+  <line x1="160" y1="236" x2="160" y2="326" class="ln" marker-end="url(#a)"/>
+  <text x="174" y="266" class="s" text-anchor="start">driver &lt; enter bound</text>
+  <text x="174" y="286" class="s" text-anchor="start">/ open a segment</text>
+  <rect x="60" y="326" width="420" height="232" rx="4" class="box"/>
+  <text x="76" y="354" class="tb" text-anchor="start">Engaged</text>
+  <text x="76" y="374" class="s" text-anchor="start">the segment is open</text>
+  <line x1="60" y1="388" x2="480" y2="388" stroke="#C7D6DC" stroke-width="1.2"/>
+  <text x="76" y="412" class="sb" text-anchor="start">the phase, resolved per frame:</text>
+  <text x="76" y="442" class="s" text-anchor="start">driver still falling</text>
+  <text x="464" y="442" class="mb" text-anchor="end">descent</text>
+  <text x="76" y="466" class="s" text-anchor="start">driver still rising</text>
+  <text x="464" y="466" class="mb" text-anchor="end">ascent</text>
+  <text x="76" y="490" class="s" text-anchor="start">otherwise, within the band</text>
+  <text x="464" y="490" class="mb" text-anchor="end">bottom</text>
+  <text x="76" y="514" class="s" text-anchor="start">of the running extreme</text>
+  <path d="M 480 436 H 660 V 210 H 260" class="ln" marker-end="url(#a)"/>
+  <text x="492" y="336" class="s" text-anchor="start">driver &gt;= exit bound</text>
+  <text x="492" y="356" class="s" text-anchor="start">/ count it if the segment</text>
+  <text x="492" y="376" class="s" text-anchor="start">lasted between the</text>
+  <text x="492" y="396" class="s" text-anchor="start">declared min and max</text>
+  <text x="60" y="596" class="e" text-anchor="start">The direction test is applied on both sides of the extremum.</text>
+  <text x="60" y="618" class="e" text-anchor="start">Testing the band first would make every descending frame</text>
+  <text x="60" y="640" class="e" text-anchor="start">read as the bottom, because the running extreme tracks it.</text>
+  <rect x="740" y="56" width="604" height="624" rx="8" class="reg"/>
+  <text x="764" y="84" class="h" text-anchor="start">A hold: the driver rises to enter</text>
+  <text x="764" y="104" class="s" text-anchor="start">Front plank</text>
+  <circle cx="864" cy="146" r="11" fill="#16323D"/>
+  <rect x="764" y="184" width="200" height="52" rx="4" class="boxp"/>
+  <text x="864.0" y="207.0" class="tb" text-anchor="middle">Not engaged</text>
+  <text x="864.0" y="225.0" class="s" text-anchor="middle">phase: out</text>
+  <line x1="864" y1="157" x2="864" y2="184" class="ln" marker-end="url(#a)"/>
+  <line x1="864" y1="236" x2="864" y2="326" class="ln" marker-end="url(#a)"/>
+  <text x="878" y="266" class="s" text-anchor="start">driver &gt;= enter bound</text>
+  <text x="878" y="286" class="s" text-anchor="start">/ open a segment</text>
+  <rect x="764" y="326" width="320" height="96" rx="4" class="box"/>
+  <text x="780" y="354" class="tb" text-anchor="start">Engaged</text>
+  <text x="780" y="374" class="s" text-anchor="start">phase: holding</text>
+  <line x1="764" y1="388" x2="1084" y2="388" stroke="#C7D6DC" stroke-width="1.2"/>
+  <text x="780" y="412" class="s" text-anchor="start">no descent, bottom or ascent</text>
+  <path d="M 1084 374 H 1290 V 210 H 964" class="ln" marker-end="url(#a)"/>
+  <text x="1100" y="330" class="s" text-anchor="start">driver &lt; exit bound</text>
+  <text x="1100" y="350" class="s" text-anchor="start">/ add the duration, if it</text>
+  <text x="1100" y="370" class="s" text-anchor="start">lasted at least the minimum</text>
+  <text x="764" y="470" class="e" text-anchor="start">All three phase roles collapse onto the held phase, so a</text>
+  <text x="764" y="492" class="e" text-anchor="start">fault scoped to it is evaluated for the whole hold. A plank</text>
+  <text x="764" y="514" class="e" text-anchor="start">reports seconds rather than a count, and that is the only</text>
+  <text x="764" y="536" class="e" text-anchor="start">evaluator feature the second movement category cost.</text>
+  <text x="44" y="722" class="cap" text-anchor="start">A frame with no reading changes nothing in either machine. The state is held rather than guessed, because a dropped frame must not count a repetition or end a hold.</text>
+
+</svg>

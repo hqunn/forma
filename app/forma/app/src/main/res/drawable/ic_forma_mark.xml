@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The FORMA mark at text size, for the lockup beside the wordmark.
+
+  The same geometry as `Brand / Mark` in the design file and as
+  ic_forma_foreground, without the group transform that pushes the launcher
+  copy into the 72dp safe zone of an adaptive icon. A mark drawn for a
+  launcher and reused inline arrives two thirds the size it should be with a
+  margin nobody asked for.
+
+  A chevron with a keypoint on each vertex and the angle marked at the
+  apex, which is what the product does: it reads a body as points and
+  judges the angle between them.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="28dp"
+    android:height="28dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <path
+        android:pathData="M34,22 L86,60 L34,98"
+        android:strokeColor="#2E7D8F"
+        android:strokeWidth="12"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <path
+        android:pathData="M59.37,51.35 C57.54,56.97 57.54,63.03 59.37,68.65"
+        android:strokeColor="#E8663C"
+        android:strokeWidth="4"
+        android:strokeLineCap="round" />
+
+    <path android:pathData="M34,17.8 A4.2,4.2 0 1,1 33.99,17.8 Z" android:fillColor="#FFFFFF" />
+    <path android:pathData="M86,55.8 A4.2,4.2 0 1,1 85.99,55.8 Z" android:fillColor="#FFFFFF" />
+    <path android:pathData="M34,93.8 A4.2,4.2 0 1,1 33.99,93.8 Z" android:fillColor="#FFFFFF" />
+</vector>

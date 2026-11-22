@@ -1,0 +1,136 @@
+% =====================================================================
+%  FORMA - Specialized Project (CO4029) report
+%  Ho Chi Minh City University of Technology (HCMUT) - VNU-HCM
+%
+%  Compile: pdflatex -> bibtex -> pdflatex -> pdflatex
+%           (or: latexmk -pdf main.tex)
+%
+%  hcmut-thesis.cls is the faculty template's own file, byte for byte.
+%  It is never modified. Everything this report needs is added here.
+%
+%  The chapter sources in chapters/ch*.tex are GENERATED from the
+%  Markdown in docs/report/ by md2tex.py. Edit the Markdown, not the
+%  .tex. The front matter and appendices in chapters/front and
+%  chapters/back are written by hand and are not generated.
+% =====================================================================
+\documentclass[english,final]{hcmut-thesis}
+
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{listings}
+\usepackage[nameinlink]{cleveref}
+
+\graphicspath{{graphics/}}
+
+% Sections are numbered to subsection depth, because the prose refers to
+% subsections by number. The contents list stops at section, because a
+% contents page listing every subsection is a wall.
+\setsecnumdepth{subsection}
+\settocdepth{section}
+
+% Generated tables are longtable, so they break across pages instead of
+% floating away from the paragraph that introduces them.
+\setlength{\LTcapwidth}{\textwidth}
+
+\lstset{%
+  basicstyle=\footnotesize\ttfamily,
+  breaklines=true,
+  breakatwhitespace=false,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  upquote=true,
+  frame=leftline,
+  framesep=8pt,
+  xleftmargin=10pt,
+  aboveskip=10pt,
+  belowskip=10pt,
+}
+
+% The market sources in the bibliography are long hyphenated news URLs. The
+% url package breaks only after a small set of characters by default, and a
+% hyphen is not one of them, so each address is set as a single box that runs
+% off the page. This adds the characters those addresses are actually made of.
+% No \Urlmuskip here: stretchable glue between the characters lets a short
+% line spread one address out across the full measure, which looks worse than
+% the overflow it fixes.
+\def\UrlBreaks{\do\/\do\-\do\.\do\_\do\?\do\&\do\=\do\+\do\:}
+
+% Block quotations: indented and set smaller, not italicised, because
+% several of them carry bold statements that italics would fight with.
+\newenvironment{quoteblock}%
+  {\begin{list}{}{\setlength{\leftmargin}{1.6em}%
+                  \setlength{\rightmargin}{1.6em}%
+                  \setlength{\listparindent}{0pt}%
+                  \setlength{\parsep}{0.5\baselineskip}}%
+   \item[]\small}%
+  {\end{list}}
+
+% ---------------------------------------------------------------------
+%  Report information
+% ---------------------------------------------------------------------
+\reporttype{Specialized Project}
+\title{FORMA: An AI-Powered Personal Training System\\on Mobile Devices}
+\stumajor{Computer Science}
+\reporttime{November 2026}
+
+\supervisor{
+  Assoc.~Prof.~Dr.~Quan Thanh Tho
+}
+\stuname{
+  \begin{tabular}{@{}l@{\hspace{1em}}l@{}}
+    Dinh Hoang Quan & -- 2352986 \\
+  \end{tabular}
+}
+
+\begin{document}
+\coverpage%
+
+\frontmatter%
+\include{chapters/front/declaration}
+\include{chapters/front/acknowledgements}
+\include{chapters/front/abstract}
+\include{chapters/front/workload}
+
+\tableofcontents
+\clearpage
+\listoffigures
+\clearpage
+\listoftables
+
+\mainmatter%
+\counterwithin{equation}{chapter}
+\counterwithin{table}{chapter}
+\counterwithin{figure}{chapter}
+
+\include{chapters/ch01-introduction-and-problem}
+\include{chapters/ch02-market-and-technology-survey}
+\include{chapters/ch03-requirements}
+\include{chapters/ch04-design-decisions-and-justification}
+\include{chapters/ch05-system-architecture}
+\include{chapters/ch06-movement-assessment-design}
+\include{chapters/ch07-detailed-design}
+\include{chapters/ch08-ui-ux-design}
+\include{chapters/ch09-proof-of-concept}
+\include{chapters/ch10-testing-and-evaluation}
+\include{chapters/ch11-project-management-and-conclusion}
+
+% Every entry in references.bib is now cited by marker in the prose, so
+% \nocite{*} currently adds nothing. It stays as a guard: if a later edit
+% drops the last citation of a source, the source keeps its place in the
+% list instead of disappearing from the report without warning.
+\nocite{*}
+\bibliographystyle{plain}
+\bibliography{refs/references}
+
+\appendix
+% The template's "Additional Results" appendix is deliberately absent. It
+% was still the empty placeholder and no chapter referred to it. If Chapter 9
+% later needs the full benchmark tables, add one back with content in it.
+% Reproducibility was appendix-b until then; it is the only appendix now, so
+% the file was renamed to match the letter it prints as.
+\include{chapters/back/appendix-a}
+
+\end{document}

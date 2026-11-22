@@ -1,0 +1,164 @@
+{
+  "id": "bodyweight-squat",
+  "version": "0.5.0",
+  "display_name": "Bodyweight squat",
+  "status": "draft",
+  "notes": [
+    "Coordinate convention: normalised image coordinates as the engine emits them.",
+    "y increases downward.",
+    "Every threshold in this file is provisional. None was derived from recorded clips,",
+    "and no source located gives a numeric threshold for any fault. See docs/specs/SOURCES.md.",
+    "v0.2.0 (2026-10-31): SQ_KNEE_VALGUS removed, see excluded_faults.",
+    "v0.5.0 (2026-11-03): SQ_HEEL_LIFT removed, see excluded_faults. The squat now declares two faults. 4.2 loses its only load-bearing example, so the engine decision is re-argued on the measured benchmark instead of on landmark topology.",
+    "v0.4.0 (2026-11-04): guidance_asset and instruction_asset added. Every line the user",
+    "hears before the set is now spoken, not shown: the camera faces the user, so the",
+    "screen does not. See docs/specs/guidance.json for the lines shared across exercises.",
+    "v0.3.0 (2026-10-31): all three faults now carry a taxonomy source, the Functional",
+    "Movement Screen deep squat criteria (Cook, Burton and Hoogenboom 2006). SQ_FORWARD_LEAN",
+    "was rewritten to implement the published criterion directly - torso against tibia,",
+    "within the frame - which is relative by construction and needs no calibration. The",
+    "bottom_torso_angle calibration measurement added in v0.2.0 was removed as a result."
+  ],
+
+  "excluded_faults": [
+    {
+      "code": "SQ_KNEE_VALGUS",
+      "description": "Knees travelling inward relative to the feet during the descent.",
+      "reason": "Not observable in the framing this exercise declares. Knee separation is a frontal-plane measurement: it is the distance between the left and right knee. This specification declares a sagittal view, in which the left and right knee project onto nearly the same image point and their separation is dominated by estimation noise rather than by knee position. The engine still returns a number for the occluded side, but it is an inference and not a measurement, and thresholding it would produce a detector that fires at random.",
+      "why_not_change_the_framing": "Three of the four remaining measurements - knee angle for depth, heel against foot index for heel lift, and torso against vertical for lean - require the sagittal view. Valgus is the only one that does not. Adding a second framing would mean asking the user to move the phone between sets, which the interaction model in Chapter 9 is built to avoid.",
+      "status": "excluded_from_mvp",
+      "taxonomy_source": "Cook G, Burton L, Hoogenboom B, Part 1, as above. Deep Squat, score III criterion: 'Knees are aligned over feet'; score I: 'Knees are not aligned over feet'. Corroborated by Fitness-AQA (Parmar et al., ECCV 2022), whose expert-trainer annotations for BackSquat include Knees Inward.",
+      "source_note": "Recorded deliberately. This fault has a published source and is excluded purely because the framing cannot observe it. Keeping the citation here prevents the exclusion from being misread later as a gap in the evidence rather than a limit of the camera position.",
+      "revisit_when": "A second framing is introduced for an exercise that needs one anyway, at which point a frontal squat set becomes cheap to add. 4.5 section 6 governs.",
+      "decided": "2026-10-31"
+    },
+    {
+      "code": "SQ_HEEL_LIFT",
+      "description": "The heel came off the floor at the bottom of the squat.",
+      "reason": "A cue cannot fix it. Heels rising at the bottom of a squat is in most cases a limit on ankle dorsiflexion rather than a choice the user is making, and telling a user to keep their heels down does not give them ankle range. Every other fault in the MVP set names something the user can do differently on the next repetition; this one does not. An in-set feedback system that speaks an uncorrectable fault spends its one cue on advice the user cannot take.",
+      "measurement_defect": "Independently of the product argument, the measurement as specified did not work. The value was y_delta(LEFT_HEEL, LEFT_FOOT_INDEX) divided by foot_length. In set-20261111-084459 the divisor varied by a factor of 1.89 within one set, from 0.128396 to 0.067830, for a foot that does not change length. Repetitions 2 and 7 carry the same raw displacement to within two percent, -0.040358 and -0.041246, and report severities of -0.314328 and -0.608081. The heel landmark is not at fault: its visibility was 0.891 to 0.936 in every one of those frames, and in sweep-20260910-215904 it cleared the 0.6 visibility floor in 100 percent of frames in all six configurations.",
+      "likely_cause": "Stated as a hypothesis, not as a measurement. The engine normalises x by image width and y by image height. The frame is 720 by 1280 and no square crop or correction is applied anywhere in the assessment layer. A mostly horizontal foot length and a vertical heel rise are therefore measured on differently scaled axes, so their ratio does not cancel. The factor this predicts is 1280/720 = 1.78 against an observed 1.89.",
+      "status": "excluded_from_mvp",
+      "taxonomy_source": "Cook G, Burton L, Hoogenboom B, Part 1, as above. The Deep Squat protocol states the position 'should be assumed with the heels on the floor', and a performance achievable only with a '2x6 board required under feet' - that is, with the heels elevated - is scored II rather than III. Heel contact with the floor is therefore an explicit criterion of correct performance in the source instrument.",
+      "source_note": "Recorded deliberately. This fault has a published source and is excluded on product and measurement grounds, not for want of evidence that it is a real fault.",
+      "consequence": "4.2 eliminated three pose engines because the COCO 17-keypoint topology has no heel landmark. SQ_HEEL_LIFT was that finding's only load-bearing example. With it excluded, every remaining fault in all three specifications is expressible in COCO-17, and the engine decision has to be re-argued on the measured benchmark sweep-20260910-215904 instead of on topology.",
+      "revisit_when": "An isotropic coordinate conversion exists in the assessment layer, and a use case appears for a fault the user cannot correct in the moment, such as a post-set mobility note rather than an in-set cue.",
+      "decided": "2026-11-03"
+    }
+  ],
+
+  "landmarks": [
+    "LEFT_SHOULDER", "RIGHT_SHOULDER",
+    "LEFT_HIP", "RIGHT_HIP",
+    "LEFT_KNEE", "RIGHT_KNEE",
+    "LEFT_ANKLE", "RIGHT_ANKLE"
+  ],
+
+  "framing": {
+    "view": "sagittal",
+    "distance_m": [2.0, 4.0],
+    "camera_height_m": [0.5, 1.2],
+    "min_visibility": 0.45,
+    "required_visible": [
+      "LEFT_HIP", "LEFT_KNEE", "LEFT_ANKLE", "LEFT_SHOULDER"
+    ],
+    "reminders": [
+      "Please keep your whole body in frame, feet included",
+      "Please stand side on to the camera, not facing it",
+      "Please leave the phone where it is once you have started"
+    ],
+    "guidance": "Press start, then step back and turn side on to the camera."
+  },
+
+
+  "rep_driver": {
+    "signal": { "fn": "angle", "args": ["LEFT_HIP", "LEFT_KNEE", "LEFT_ANKLE"], "aggregate": "mean_of_sides" },
+    "rationale": "A joint angle is already scale invariant, so it needs no normalisation by body size. Hip height would need it.",
+    "reports": { "type": "count" },
+    "direction": "decreasing_is_descent",
+    "smoothing": { "type": "median", "window_frames": 3 },
+    "hysteresis_rationale": "Re-derived from the ten scripted sets. The previous bounds, 155 and 165, lost one repetition in SQ-CLEAN and three in SQ-LEAN out of ten performed in each, which the driver trace confirms: the closing bound sat inside the spread of this performer's own top-of-repetition angle. THE FAULT CHANGES THE TOP OF THE REPETITION, which is the part worth keeping. Standing fully upright between clean squats the knee reached 174 to 179 degrees, but leaning forward it reached only 160 to 171, because a pitched torso is not accompanied by a fully extended knee. A bound tuned on clean form therefore failed on the one set where counting mattered most. The lowest top across all three sets is 160.4 degrees and the shallowest bottom is 70.6, so entry stays at 145 to preserve the descent window that SQ_FORWARD_LEAN is scoped to, and the close drops to 156, which leaves 4.4 degrees under the lowest top observed and 74.4 above the shallowest bottom. All three sets then count 10 of 10. This is fitted to one performer in one session and the margin at the closing end is four degrees, so it is the parameter most likely to need moving again. The durable fix is to close a repetition relative to where that repetition started rather than against a fixed angle, which is not built.",
+    "hysteresis": {
+      "descent_enter": { "type": "absolute", "value": 145.0 },
+      "ascent_exit": { "type": "absolute", "value": 156.0 }
+    },
+    "min_rep_ms": 800,
+    "max_rep_ms": 8000
+  },
+
+  "phases": [
+    { "name": "standing", "entered_when": "driver >= ascent_exit" },
+    { "name": "descent", "entered_when": "driver < descent_enter and driver decreasing" },
+    { "name": "bottom", "entered_when": "driver at local minimum, within 10 degrees of it" },
+    { "name": "ascent", "entered_when": "driver increasing and below ascent_exit" }
+  ],
+
+  "faults": [
+    {
+      "code": "SQ_DEPTH_INSUFFICIENT",
+      "evaluate": "per_rep",
+      "description": "The thigh did not reach horizontal: the hip stayed above the knee at the bottom of the squat.",
+      "coaching": {
+        "fix": "Sit the hips back and down as though reaching for a low seat, rather than pushing the knees forward. Go down more slowly and stop only once the thigh is level with the floor. If the depth will not come, widen your stance a little and let your feet turn out."
+      },
+      "phases": ["bottom"],
+      "measure": { "fn": "y_delta", "args": ["LEFT_HIP", "LEFT_KNEE"], "aggregate": "mean_of_sides" },
+      "operator": "lt",
+      "threshold": { "type": "absolute", "value": -0.0209 },
+      "min_frames": 3,
+      "provenance": {
+        "status": "taxonomy_confirmed",
+        "plain_source": "The Functional Movement Screen, a standard trainers use, which gives a squat full marks only once the thigh reaches level.",
+        "taxonomy_source": "Cook G, Burton L, Hoogenboom B. Pre-participation screening: the use of fundamental movements as an assessment of function - Part 1. N Am J Sports Phys Ther 2006;1(2):62-72. PMCID PMC2953313. Deep Squat, score III criterion: 'Femur below horizontal'; score I: 'Femur is not below horizontal'. Corroborated by Fitness-AQA (Parmar et al., ECCV 2022), whose expert-trainer annotations for BackSquat include Shallow Squat.",
+        "threshold_source": null,
+        "note": "Implements the published criterion directly as of v0.4.0, replacing the calibrated threshold of v0.3.0. Femur below horizontal is the hip landmark at or below the knee landmark, so the measurement is a signed vertical difference and the threshold is zero. Three consequences, all of them improvements. There is no invented number: the threshold is the criterion, not a tolerance chosen to make it fire. There is no calibration: the user demonstrates nothing before training, and a user who calibrated badly can no longer encode bad form as their own standard. And the measurement is immune to the coordinate anisotropy that affects every angle in this file, because both terms are divided by frame height and the horizontal scale never enters it. What this gives up is the protection the calibrated threshold was built for: a user whose ankle mobility prevents the position will now be told to go deeper on every repetition, which is advice they cannot act on. The containment is not a softer threshold but a different response, stated once rather than cued every rep, and it is not built yet. Noise is handled in time rather than in magnitude: min_frames is 3 rather than 2. THRESHOLD TOLERANCE, 2026-11-05. The criterion is still femur below horizontal and the criterion is still zero. The threshold is set 0.0209 below it, which is six degrees of femur angle at the femur length this subject presented, so that the system does not speak about a difference it cannot resolve. The figure comes from repeatability rather than from a source: ten repetitions performed at a constant depth, replayed from data/replay/20261105_013644.mp4, gave a standard deviation of 0.0107 and a full range of -0.0163 to +0.0163 at the deepest point of each repetition, so a repetition within that distance of horizontal has no reproducible verdict. At a threshold of zero those ten repetitions split six to four; at -0.0209 all ten pass. The direction is the one 3.4.3 requires, since a false positive is the most damaging failure this product has. Three things this number is not. It is not a source-backed tolerance, and it is to be confirmed or replaced by the certified trainers who review the fault set; what they set is what the report reports. It mixes the subject's own variation between repetitions with the measurement's noise on an identical position, which were not separated. And the degree equivalent depends on femur length in frame, which the record does not store and which was assumed at 256 px; the threshold itself is in recorded units and does not depend on that assumption. No upper edge exists: a repetition below horizontal passes at any depth, and a fault for excessive depth is phase two."
+      }
+    },
+    {
+      "code": "SQ_FORWARD_LEAN",
+      "description": "The torso pitched further forward than the shin, rather than staying parallel with it or more upright.",
+      "coaching": {
+        "fix": "Lift your chest and keep your weight through the middle of the foot. If the chest keeps dropping towards the floor, squat to a shallower depth you can hold the line at, then add the depth back slowly over a few sessions."
+      },
+      "phases": ["descent", "bottom"],
+      "measure": {
+        "fn": "signed_angle_between_segments",
+        "args": ["LEFT_SHOULDER", "LEFT_HIP", "LEFT_KNEE", "LEFT_ANKLE"],
+        "aggregate": "mean_of_sides"
+      },
+      "operator": "gt",
+      "threshold": { "type": "absolute", "value": 10.0 },
+      "min_frames": 3,
+      "provenance": {
+        "status": "taxonomy_confirmed",
+        "plain_source": "The Functional Movement Screen, which asks the upper body to stay parallel with the shin or more upright than it.",
+        "taxonomy_source": "Cook G, Burton L, Hoogenboom B, Part 1, as above. Deep Squat, score III criterion: 'Upper torso is parallel with tibia or toward vertical'; score I: 'Tibia and upper torso are not parallel'.",
+        "threshold_source": null,
+        "note": "Rewritten in v0.3.0 to implement the published criterion directly, replacing both the absolute 45 degrees of v0.1.0 and the calibrated version of v0.2.0. The source criterion compares the torso to the tibia within the same frame, which is relative by construction: tibia angle moves with ankle dorsiflexion and with squat depth, so the comparison normalises automatically for the two body factors that made an absolute threshold indefensible, and it does so without any calibration. This is strictly better than what this project had designed, and it is the clearest case in the MVP of a published criterion improving the implementation rather than merely authorising it. The measurement is signed and positive when the torso is further from vertical than the tibia. The 10 degree value is a tolerance for measurement noise around the source's 'parallel', and is provisional and derived from no source."
+      }
+    }
+  ],
+
+  "cues": {
+    "SQ_DEPTH_INSUFFICIENT": { "en": { "asset": "cue_squat_depth_en.wav", "text": "A little deeper." } },
+    "SQ_FORWARD_LEAN":       { "en": { "asset": "cue_squat_chest_en.wav", "text": "Chest up." } }
+  },
+
+  "trigger": {
+    "debounce_rationale": "Set to 0 on 2026-11-04. min_frames is already the transient guard, it is per fault, and it is expressed in frames, which is the unit that matters; debounce_ms duplicated it in the wrong unit and at exercise scope. The duplication is not harmless. A fault scoped to one short phase gets one window per repetition, and if that window is shorter than debounce_ms the fault cannot be spoken at any tempo. On set-20261104-232535 the depth fault was raised on four repetitions and spoken on none; repetition 11 carried confidences of 0.888 and 0.831, which clears the floor, so the debounce is what held it. The same defect has been found in more than one fault, which is what makes it a property of the control rather than of any single rule. min_gap_ms and max_cues_per_set remain, and they are what actually stop the system talking too much.",
+    "confidence_floor_rationale": "Lowered from 0.6 to 0.45 on 2026-11-04, with the engine change. The two numbers are not the same quantity: BlazePose reported a visibility and MoveNet reports a keypoint heatmap score. Measured on the same standing pose that night, run sweep-20261104-204742 against single-lite-gpu-20261104-201759, the knee scored a median of 0.761 under MoveNet and 0.986 under BlazePose. The floor is the old one scaled by that ratio, 0.6 x 0.761 / 0.986 = 0.46, rounded down. It is provisional and derived from no source, exactly like every other number in this file. What forced it: on set-20261104-232535, ten deliberately shallow squats raised the depth fault on four repetitions and the other six were excluded with hip and knee scores of 0.44 to 0.59. A flexed squat self-occludes and MoveNet's score falls further there than it does standing, so a floor set from a standing measurement is too strict in the one phase the depth fault is evaluated in.",
+    "confidence_floor": 0.45,
+    "debounce_ms": 0,
+    "min_gap_ms": 2500,
+    "max_cues_per_set": 6,
+    "max_consecutive_same_cue": 2,
+    "same_cue_reset_rationale": "How long a fault must be gone before it is heard about again. max_consecutive_same_cue stops the system repeating itself about one thing the user is already failing to fix; it is not meant to silence a correction for the rest of the session once they have fixed it and let it slip. Without a reset those two are the same thing, and a hold suffers worst because one fault is live for its whole duration, so nothing resets the counter and the exercise goes permanently quiet after two cues. THE VALUE DEPENDS ON THE SHAPE OF THE MOVEMENT. A hold carries a fault continuously, so any clear gap is a real correction and two seconds is enough to tell one from a flicker in the measurement. A counting exercise clears every fault during every standing or top phase by construction, so a short gap is the movement and not a correction: the value has to exceed one repetition or the counter resets on every rep and the limit stops meaning anything. Set above max_rep_ms for the two counting exercises and at two seconds for the plank.",
+    "same_cue_reset_ms": 10000,
+    "priority": [
+      "SQ_DEPTH_INSUFFICIENT",
+      "SQ_FORWARD_LEAN"
+    ],
+    "priority_rationale": "Faults that bear on joint loading are spoken before faults that bear on how well the repetition counted. When two fire in the same repetition, one is spoken and the other is recorded but not voiced; 7.6 carries the argument that two cues inside one repetition is worse than one.",
+    "silence_is_valid_output": true
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "written": "20261104-234828",
+  "exercise": "Bodyweight squat",
+  "reps": 10,
+  "cues_spoken": 0,
+  "pose_rate": 0.9820,
+  "fps": 29.69,
+  "calibration": {},
+  "note": "total_ms is confirmation to audio dispatch. The min_frames window before it and the platform path from play() to the first audible sample after it are both outside these figures. 11.5 governs.",
+  "faults_note": "Every fault raised, spoken or not, one entry per fault per repetition. 'declared' is the measurement over the landmarks the specification names and 'mirrored' is the same measurement over their opposites; a mean_of_sides fault fires on the average of the two. 'mirrored' is null when the measurement is not mean_of_sides. A side whose value is null was below min_visibility and did not contribute.",
+  "faults": [
+
+  ],
+  "cues": [
+
+  ]
+}
